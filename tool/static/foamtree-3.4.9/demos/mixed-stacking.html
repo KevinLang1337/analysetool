@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mixing hierarchical and flattened stacking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+
+    <meta charset="utf-8"/>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="assets/css/common.css" rel="stylesheet"/>
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="visualization"></div>
+    </div>
+    <div id="side">
+      <h2 class="font">Mixing hierarchical and flattened stacking</h2>
+
+      <p>
+        You can use the <code><a href="../api/index.html#descriptionGroup">descriptionGroup</a></code>
+        option to combine hierarchical and stacked flattening in one diagram.
+        This example uses hierarchical layout for top-level groups and flattens
+        lower-level groups.
+      </p>
+
+      <p>
+        Since setting per-group stacking is not yet supported, to implement
+        flattened stacking inside a hierarchical layout a small trick is
+        required: all groups on the second level have their <code>open</code>
+        and <code>description</code> properties set to <code>true</code>.
+        This will visually emulate flattened stacking while the global stacking
+        option remains set to <code>hierarchical</code>.
+      </p>
+    </div>
+
+    <script src="../carrotsearch.foamtree.js"></script>
+    <script src="../carrotsearch.foamtree.util.treemodel.js"></script>
+
+    <!-- Include Hammer.js for mobile interactions. Not required for desktop-only apps. -->
+    <script src="assets/js/hammer.min.js"></script>
+
+    <!-- A simple static JSON-P loader -->
+    <script>
+      // Once the content loads, initialize the demo
+      window.addEventListener("load", function () {
+        var foamtree = new CarrotSearchFoamTree({
+          id: "visualization",
+          pixelRatio: window.devicePixelRatio || 1,
+
+          dataObject: generateHierarchy(7),
+
+          // Disable animations
+          rolloutDuration: 0,
+          pullbackDuration: 0,
+
+          // Customize borders, fill and strokes
+          groupBorderWidth: 2,
+          groupInsetWidth: 4,
+          groupBorderRadius: 0.1,
+          groupBorderRadiusCorrection: 1,
+
+          groupSelectionOutlineWidth: 3.5,
+
+          groupStrokeWidth: 0.33,
+          groupStrokeType: "plain",
+          groupStrokePlainLightnessShift: -10,
+
+          // Allow some more time to draw
+          finalCompleteDrawMaxDuration: 500,
+          finalIncrementalDrawMaxDuration: 500,
+
+          // Enable description groups for hierarchical stacking
+          descriptionGroup: "always",
+
+          // Use custom label padding for the description group
+          groupLabelLayoutDecorator: function (opts, params, vars) {
+            if (params.description) {
+              vars.verticalPadding = 0.1;
+              vars.maxTotalTextHeight = 1.0;
+            }
+          },
+
+          // Replace expose with zoom
+          onGroupDoubleClick: function (e) {
+            e.preventDefault();
+            var group = e.secondary ? e.bottommostOpenGroup : e.topmostClosedGroup;
+            var toZoom;
+            if (group) {
+              // Open on left-click, close on right-click
+              this.open({ groups: group, open: !e.secondary });
+              toZoom = e.secondary ? group.parent : group;
+            } else {
+              toZoom = this.get("dataObject");
+            }
+            this.zoom(toZoom);
+          },
+
+          // When Esc is pressed, don't close the intermediate open groups
+          // we used to emulate flattened stacking.
+          onKeyUp: function (e) {
+            if (e.keyCode === 27) {
+              e.preventDefault();
+              this.expose([]);
+              var toClose = [];
+              CarrotSearchFoamTree.TreeModel.eachDescendantAndSelf(
+                this.get("dataObject"), function (group) {
+                  if (!group.open) {
+                    toClose.push(group);
+                  }
+                });
+              this.zoom(this.get("dataObject"));
+              this.open({ groups: toClose, open: false });
+            }
+          },
+
+          // Prevent the user from closing the intermediate open groups
+          // we used to emulate flattened stacking.
+          onGroupHold: function (e) {
+            if (e.bottommostOpenGroup && e.bottommostOpenGroup.open && e.secondary) {
+              e.preventDefault();
+            }
+          }
+        });
+
+        // Resize FoamTree on orientation change
+        window.addEventListener("orientationchange", foamtree.resize);
+
+        // Resize on window size changes
+        window.addEventListener("resize", (function () {
+          var timeout;
+          return function () {
+            window.clearTimeout(timeout);
+            timeout = window.setTimeout(foamtree.resize, 300);
+          }
+        })());
+
+        // Generate input groups.
+        function generateHierarchy(topLevelCount) {
+          var topLevel = generate(topLevelCount, "Group ");
+
+          topLevel.forEach(function (top) {
+            top.groups = generate(topLevelCount, top.label + ".");
+
+            // Make second-level groups open. Also set the "description"
+            // property to true to draw the group's label inside the
+            // description area.
+            top.groups.forEach(function (sub) {
+              sub.description = true;
+              sub.open = true;
+              sub.groups = generate(topLevelCount, sub.label + ".");
+            });
+          });
+          return {
+            groups: topLevel
+          };
+        }
+
+        function generate(count, labelPrefix) {
+          var result = [];
+          for (var i = 0; i < count; i++) {
+            result.push({
+              label: labelPrefix + (i + 1),
+              weight: 1 / (i + 1)
+            });
+          }
+          return result;
+        }
+      });
+    </script>
+  </body>
+</html>

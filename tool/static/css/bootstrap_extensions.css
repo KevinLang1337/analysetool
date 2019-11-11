@@ -1,0 +1,23 @@
+/**
+ * Extra large button extensions. Extends `.btn`.
+ */
+ .btn-xlarge {
+    padding: 20px 50px;
+    height: 100%;
+    font-size: 30px;
+    line-height: normal;
+    -webkit-border-radius: 8px;
+       -moz-border-radius: 8px;
+            border-radius: 8px;
+    }
+
+.analysebutton {
+    height: 100%;
+    width:50%;
+}
+
+.index_button_body{
+    height: 100%;
+    width:100%;
+    margin:0;
+}

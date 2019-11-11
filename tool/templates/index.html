@@ -2,15 +2,15 @@
 
 {% block title %}<title>Awesome Bibliothek</title>{% endblock %}
 {% block content %}
-  <h1>Local Library Home</h1>
-  <p>Welcome to LocalLibrary, a website developed by <em>Mozilla Developer Network</em>!</p>
-  <h2>Dynamic content</h2>
-  <p>The library has the following record counts:</p>
-  <ul>
-    <li><strong>Books:</strong> {{ num_books }}</li>
-    <li><strong>Copies:</strong> {{ num_instances }}</li>
-    <li><strong>Copies available:</strong> {{ num_instances_available }}</li>
-    <li><strong>Authors:</strong> {{ num_authors }}</li>
-    <li><strong>Genres:</strong> {{ num_genres }}</li>
-  </ul>
+<html style="height:100%">
+<body class="index_button_body">
+  <div class="analysebutton">
+    <button type="button" class="btn btn-primary btn-xlarge" style="width:100%;height:100%">Analyse</button>
+    <button type="button" class="btn btn-primary btn-xlarge" style="width:100%;height:100%">Analyse</button></div>
+ </body>
+</html>
+
+
 {% endblock %}
+
+

@@ -4,6 +4,9 @@ from django.shortcuts import render
 
 from tool.models import Book, Author, BookInstance, Genre
 
+def konfiguration(request):
+    return render(request, 'konfiguration.html')
+
 def index(request):
     """View function for home page of site."""
 

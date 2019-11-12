@@ -1,20 +1,30 @@
 {% extends "base_generic.html" %}
 
 {% block title %}<title>Awesome Bibliothek</title>{% endblock %}
-{% block content %}
-<html style="height:100%; padding:5%">
-<body class="index_button_body">
-  <div class="analysebutton row">
-      <div class="col-md-6 padding-0">
-    <button type="button" class="btn btn-primary btn-xlarge">Webcrawler</button>
-    </div><div class="col-md-6 padding-0">
-    <button onclick="location.href='{% url 'konfiguration' %}';" type="button" class="btn btn-primary btn-xlarge">Analyse</button>
-</div>
-</div>
- </body>
-</html>
-
-
+{% block breadcrumbs %}
+  <div class="row breadcrumb-style">
+        <div class="col-md-12" style="height: 100%;">
+                <ol class="breadcrumb align-items-center" style="height:100%; background-color: lightgrey; font-size: large;">
+                        <li class="breadcrumb-item active text-light" aria-current="page">Hauptmenü</li>
+                      </ol>
+        </div>
+    </div>
 {% endblock %}
 
+{% block content %}
+<html class="html-style">
 
+<body class="index_button_body">
+  <div class="analysebutton row">
+    <div class="col-md-6 padding-0">
+      <button type="button" class="btn btn-primary btn-xlarge">Webcrawler</button>
+    </div>
+    <div class="col-md-6 padding-0">
+      <button onclick="location.href='{% url 'konfiguration' %}'" type="button"
+        class="btn btn-primary btn-xlarge">Analyse</button>
+    </div>
+  </div>
+</body>
+
+</html>
+{% endblock %}

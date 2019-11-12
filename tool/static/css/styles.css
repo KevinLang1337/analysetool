@@ -4,3 +4,22 @@
     list-style: none;
 }
 
+.with_scrollbar{
+    height:100%;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+.title{
+    margin-top: 1%;
+    font-size: large;
+}
+
+.btn-space{
+    margin-top: 1%;
+}
+
+.nospace{
+    margin:0;
+    padding:0;
+}

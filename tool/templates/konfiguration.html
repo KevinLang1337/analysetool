@@ -3,34 +3,62 @@
 {% block title %}<title>Analysetool</title>{% endblock %}
 {% block content %}
 <html style="height:100%">
-<body style="height:100%; margin-left: 2%">
-<div class="row">
-  <div class="col-3 nospace">
+
+<body style="height:100%; margin-left: 2%; margin-right: 1%;">
+  <div class="row" style="height: 75%;">
+    <div class="col-3 nospace">
       <h1 class="title">Gespeicherte Einstellungen</h1>
       <div class="row">
-          <div class="col-10 nospace">
-            <ul class="list-group with_scrollbar">
-              <li class="list-group-item">Cras justo odio</li>
-              <li class="list-group-item">Dapibus ac facilisis in</li>
-              <li class="list-group-item">Morbi leo risus</li>
-              <li class="list-group-item">Porta ac consectetur ac</li>
-              <li class="list-group-item">Vestibulum at eros</li>
-            </ul>   
-          </div>
-          <div class="col-2 nospace">
-              <div class="btn-group-vertical" style="margin-left:5%">
-                  <button type="button" class="btn btn-lg">1</button>
-                  <button type="button" class="btn btn-lg">2</button>
-                  <button type="button" class="btn btn-lg">3</button>
-                </div>
-          </div>
-          <button type="button" class="btn btn-space btn-md btn-block" style="width:83.3%">Einstellungen überschreiben</button>
+        <div class="col-10 nospace">
+          <ul class="list-group with_scrollbar">
+            <li class="list-group-item">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Morbi leo risus</li>
+            <li class="list-group-item">Porta ac consectetur ac</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+          </ul>
         </div>
-        <h1 class="title">Einstellungen</h1>
-        <h1 class="title">Einstellungen</h1>
+        <div class="col-2 nospace">
+          <div class="btn-group-vertical" style="margin-left:5%">
+            <button type="button" class="btn btn-lg">1</button>
+            <button type="button" class="btn btn-lg">2</button>
+            <button type="button" class="btn btn-lg">3</button>
+          </div>
+        </div>
+        <button type="button" class="btn btn-space btn-md btn-block" style="width:83.3%">Einstellungen
+          überschreiben</button>
+      </div>
+      <h1 class="title">Einstellungen</h1>
+      <h1 class="title">Einstellungen</h1>
+    </div>
+    <div class="col-6">col-6</div>
+
+    <!-- RECHTE SPALTE -->
+
+    <div class="col-3">
+      <h1 class="title">Informationen</h1>
+      <ul class="list-group" style="margin-bottom: 5%;">
+        <li class="list-group-item">Dokumente in Verzeichnis: XXXX</li>
+        <li class="list-group-item">Frühestes Datum: XX.XX.XX</li>
+        <li class="list-group-item">Spätestes Datum: XX.XX.XX</li>
+      </ul>
+
+      <!-- BUTTON EINSTELLUNGEN SPEICHERN -->
+      <button type="button" class="btn btn-primary btn-lg text-center"
+        style="width: 75%; height: 50%; margin: auto; margin-top: 5%; display: block"><span
+          class="glyphicon glyphicon-floppy-disk gly-4x"></span><br><br>Einstellungen
+        speichern</button>
+
+      <!-- BUTTON ANALYSE STARTEN -->
+      <button type="button" class="btn btn-primary btn-lg text-center"
+        style="width: 75%; height: 50%; margin: auto; margin-top: 5%; display: block"><span
+          class="fa fa-line-chart fa-4x"></span><br><br>Analyse starten</button>
+
   </div>
-  <div class="col-6">col-6</div>
-  <div class="col-3">col-3</div>
+
+
+
+
   </div>
 </body>
 </html>

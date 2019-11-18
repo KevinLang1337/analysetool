@@ -6,8 +6,6 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row" style="height: 93vh;">
         <!-- LEFT COLUMN -->
         <div class="col-3" style="flex-flow: column; display:flex;">
             <h1 class="title" style="margin-top: 0; padding-top: 0">Gespeicherte Konfigurationen</h1>
@@ -28,7 +26,7 @@
         </div>
 
         <!-- MIDDLE COLUMN -->
-        <div class="col-6 with_scrollbar" style="flex-flow: column; display:flex;">
+        <div class="col-6" style="flex-flow: column; display:flex;">
             <h1 class="title" style="text-align: center;">Quellen in Verzeichnis</h1>
             <!-- TABLE MIDDLE -->
             <table class="table">
@@ -61,6 +59,7 @@
                         <td>01.11.2019</td>
                         <td>PDF</td>
                     </tr>
+                                      
                 </tbody>
             </table>
         </div>
@@ -159,10 +158,4 @@
                     class="fa fa-line-chart fa-4x"></span><br>Analyse starten</button>
 
         </div>
-
-
-    </div>
-</div>
-
-
 {% endblock %}

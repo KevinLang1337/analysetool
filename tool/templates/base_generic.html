@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en">
+<html lang="en" style="margin:0; padding:0">
 
 <head>
     {% block title %}<title>Local Library</title>{% endblock %}
@@ -26,20 +26,24 @@
 
 <body>
     <header style="height: 5vh; min-height: 5vh; padding-bottom: 55px;">
-            <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'index' %}">
-                                <i style="margin-right: 0.5em; color: darkgray;"
-                                    class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
-                        {% block breadcrumb %}{% endblock %}
-                    </ol>
-                </nav>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}">
+                        <i style="margin-right: 0.5em; color: darkgray;"
+                            class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
+                {% block breadcrumb %}{% endblock %}
+            </ol>
+        </nav>
     </header>
 
     <main role="main">
-        {% block content %}
-        
-        {% endblock %}
+        <div class="container-fluid">
+            <div class="row" style="height: 93vh;">
+                {% block content %}
+
+                {% endblock %}
+            </div>
+        </div>
     </main>
     <!--{% block pagination %}
     {% if is_paginated %}
@@ -59,10 +63,6 @@
     {% endif %}
     {% endblock %}-->
 
-
-    </div>
-    </div>
-    </div>
 </body>
 
 </html>

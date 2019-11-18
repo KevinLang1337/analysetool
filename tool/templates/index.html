@@ -2,17 +2,11 @@
 
 {% block title %}<title>Awesome Bibliothek</title>{% endblock %}
 {% block breadcrumbs %}
-<div class="container-fluid" style="height: 5%; padding:0; margin: 0">
-  <div class="row" style="padding:0; margin: 0">
-    <div class="col-md-12" style="flex-flow: column; display:flex; padding:0; margin: 0">
-      <ol class="breadcrumb align-items-center"
-        style="border-radius: 0; height:100%; background-color: lightgrey; font-size: large;">
-        <li class="breadcrumb-item"><a href="{% url 'index' %}"><i style="margin-right: 0.5em; color: #EEEEEE;"
-          class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
-      </ol>
-    </div>
-  </div>
-</div>
+<ol class="breadcrumb align-items-center"
+  style="border-radius: 0; height:100%; background-color: lightgrey; font-size: large;">
+  <li class="breadcrumb-item"><a href="{% url 'index' %}"><i style="margin-right: 0.5em; color: #EEEEEE;"
+        class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
+</ol>
 {% endblock %}
 
 {% block content %}
@@ -23,7 +17,7 @@
     <div class="analysebutton row">
       <div class="col-md-6 padding-0">
         <button type="button" class="btn btn-primary btn-xlarge" style="white-space: normal"><span
-          class="glyphicon glyphicon-file gly-2x"></span><br>Webcrawler</button>
+            class="glyphicon glyphicon-file gly-2x"></span><br>Webcrawler</button>
       </div>
       <div class="col-md-6 padding-0">
         <button onclick="location.href='{% url 'konfiguration' %}'" type="button"

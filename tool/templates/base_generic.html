@@ -25,12 +25,21 @@
 </head>
 
 <body>
-    
-    
-    
-    {% block content %}{% endblock %}
+    <header style="height: 5vh;">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}">
+                        <i style="margin-right: 0.5em; color: darkgray;"
+                            class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
+                {% block breadcrumb %}{% endblock %}
+            </ol>
+        </nav>
+    </header>
 
-    {% block pagination %}
+    <main role="main">
+        {% block content %}{% endblock %}
+    </main>
+    <!--{% block pagination %}
     {% if is_paginated %}
     <div class="pagination">
         <span class="page-links">
@@ -46,7 +55,7 @@
         </span>
     </div>
     {% endif %}
-    {% endblock %}
+    {% endblock %}-->
 
 
     </div>

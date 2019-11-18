@@ -11,13 +11,13 @@
 
 {% block content %}
 <html class="html-style">
-<div class="container-fluid" style="height: 95%; width: 100%;">
+<div class="container-fluid" style="height: 93vh; width: 100%;">
 
   <body class="index_button_body">
     <div class="analysebutton row">
       <div class="col-md-6 padding-0">
-        <button type="button" class="btn btn-primary btn-xlarge" style="white-space: normal"><span
-            class="glyphicon glyphicon-file gly-2x"></span><br>Webcrawler</button>
+          <button onclick="location.href='{% url 'webcrawler' %}'" type="button"
+          class="btn btn-primary btn-xlarge">Webcrawler</button>
       </div>
       <div class="col-md-6 padding-0">
         <button onclick="location.href='{% url 'konfiguration' %}'" type="button"

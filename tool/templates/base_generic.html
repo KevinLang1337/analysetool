@@ -25,20 +25,12 @@
 </head>
 
 <body>
-    <header style="height: 5vh; min-height: 5vh; padding-bottom: 55px;">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'index' %}">
-                        <i style="margin-right: 0.5em; color: darkgray;"
-                            class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
-                {% block breadcrumb %}{% endblock %}
-            </ol>
-        </nav>
-    </header>
+        
+
 
     <main role="main">
-        <div class="container-fluid">
-            <div class="row" style="height: 93vh;">
+        <div class="container-fluid" style="height: 100%;padding:0;margin:0;">
+            <div class="row" style="height: 100vh; padding:0; margin:0;">
                 {% block content %}
 
                 {% endblock %}

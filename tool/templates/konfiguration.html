@@ -2,11 +2,16 @@
 {% block title %}<title>Analysetool</title>{% endblock %}
 
 
-
-
 {% block content %}
-
 <div class="container-fluid" style="height: 95%; width: 100%;">
+  {% block breadcrumbs %}
+<ol class="breadcrumb align-items-center"
+  style="border-radius: 0; background-color: lightgrey; font-size: large;">
+  <li class="breadcrumb-item"><a href="{% url 'index' %}"><i style="margin-right: 0.5em; color: #EEEEEE;"
+        class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
+  <li class="breadcrumb-item active text-light" aria-current="page">Konfiguration</li>
+</ol>
+{% endblock %}
   <div class="row" style="height: 100%;">
 
     <!-- LEFT COLUMN -->

@@ -25,36 +25,26 @@
 </head>
 
 <body>
-        
+    <main role="main" style="height: 100vh;">
+        <div class="container-fluid" style="height:100%; padding:0; margin:0;">
+            <header>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb" style="font-size: large;">
+                        <li class="breadcrumb-item"><a href="{% url 'index' %}"><i
+                                    style="margin-right: 0.5em; color:gray;"
+                                    class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
+                        {% block breadcrumb %}
+                        {% endblock %}
+                    </ol>
+                </nav>
+            </header>
 
-
-    <main role="main">
-        <div class="container-fluid" style="height: 100%;padding:0;margin:0;">
-            <div class="row" style="height: 100vh; padding:0; margin:0;">
+            <div class="row" style="height:92%; padding:0; margin:0;">
                 {% block content %}
-
                 {% endblock %}
             </div>
         </div>
     </main>
-    <!--{% block pagination %}
-    {% if is_paginated %}
-    <div class="pagination">
-        <span class="page-links">
-            {% if page_obj.has_previous %}
-            <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
-            {% endif %}
-            <span class="page-current">
-                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-            </span>
-            {% if page_obj.has_next %}
-            <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
-            {% endif %}
-        </span>
-    </div>
-    {% endif %}
-    {% endblock %}-->
-
 </body>
 
 </html>

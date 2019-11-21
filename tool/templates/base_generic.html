@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en" style="margin:0; padding:0">
+<html lang="en">
 
 <head>
     {% block title %}<title>Local Library</title>{% endblock %}
@@ -25,9 +25,9 @@
 </head>
 
 <body>
-    <main role="main" style="height: 100vh;">
+    <main role="main" style="height: 100%;">
         <div class="container-fluid" style="height:100%; padding:0; margin:0;">
-            <header>
+            <header style="height: 7vh;">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb" style="font-size: large;">
                         <li class="breadcrumb-item"><a href="{% url 'index' %}"><i
@@ -39,7 +39,7 @@
                 </nav>
             </header>
 
-            <div class="row" style="height:92%; padding:0; margin:0;">
+            <div class="row" style="height:91vh; padding:0; margin:0;">
                 {% block content %}
                 {% endblock %}
             </div>

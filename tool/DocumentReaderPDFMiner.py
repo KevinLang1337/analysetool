@@ -7,11 +7,21 @@ from pdfminer.layout import LAParams, LTTextBox, LTTextLine
 
 from os import listdir
 from os.path import isfile, join
- 
+
+from nltk.corpus import stopwords 
+from nltk.tokenize import word_tokenize 
+
+from datetime import datetime
+
+import nltk
+#nltk.download('stopwords') //MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
+#nltk.download('punkt') //MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
+#set(stopwords.words('german'))
+#set(stopwords.words('english'))
+
 dir = 'C:/Users/lanki/Documents/Uni/Semester 4/Masterarbeit/Test-Daten/funktionsfähig/'
 files_in_dir = [f for f in listdir(dir) if isfile(join(dir, f))]
-print (files_in_dir)
-
+#print (files_in_dir)
 
 # obj = open('C:/Users/lanki/Documents/Uni/Semester 4/Masterarbeit/Test-Daten/Funktionsfähig/ipsum.txt', encoding="utf8")
 # for line in obj:
@@ -19,20 +29,17 @@ print (files_in_dir)
 # obj.close()
 
 #-------------------
-
-#-------------------
-
-
 # #fp = open('../Testdatei.pdf', 'rb')
 
 number_files = len(files_in_dir)
+dateTimeObj = datetime.now()
+
+
 print("Analyse von ", number_files, " Dokument/en wird gestartet...")
-
-
 
 extracted_text = ''
 for file in files_in_dir:
-    print("Analyse gestartet")
+    #print("Analyse gestartet")
     fp = open(dir+file, 'rb')
     parser = PDFParser(fp)
     doc = PDFDocument(parser)
@@ -54,4 +61,40 @@ for file in files_in_dir:
                 extracted_text += lt_obj.get_text()
 
 print("Analyse beendet")
-print(extracted_text)
+#print(extracted_text)
+  
+#example_sent = "This is a sample sentence, showing off the stop words filtration."
+  
+stop_words = set(stopwords.words('german')) 
+stopword_extension = ['(', ')','.',':',',',';','!','?','´','"','“','„','»', '«', '–', '—','•'] 
+stop_words.update(stopword_extension) # -- erweitert die Stoppwortliste
+
+
+word_tokens = word_tokenize(extracted_text) 
+  
+filtered_sentence = [w for w in word_tokens if not w in stop_words] 
+  
+filtered_sentence = [] 
+  
+for w in word_tokens: 
+    if w not in stop_words: 
+        filtered_sentence.append(w) 
+  
+#print(word_tokens) 
+#print(filtered_sentence) 
+
+from nltk.stem.snowball import SnowballStemmer
+stemmer = SnowballStemmer('german')
+stemmed_text = [stemmer.stem(word) for word in filtered_sentence]
+#print(stemmed_text)
+
+from collections import Counter
+counts = Counter(stemmed_text)
+print(counts)
+
+#------- ANALYSEDAUER ----------
+
+dateTimeObjEnd = datetime.now()
+
+analyse_dauer = dateTimeObjEnd - dateTimeObj
+print("Analysedauer: ", analyse_dauer)

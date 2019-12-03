@@ -14,12 +14,11 @@ from nltk.tokenize import word_tokenize
 from datetime import datetime
 
 import nltk
-#nltk.download('stopwords') //MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
-#nltk.download('punkt') //MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
-#set(stopwords.words('german'))
-#set(stopwords.words('english'))
+# nltk.download('stopwords') #MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
+# nltk.download('punkt') #MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
 
-dir = 'C:/Users/lanki/Documents/Uni/Semester 4/Masterarbeit/Test-Daten/funktionsfähig/'
+
+dir = "tool/documents/"
 files_in_dir = [f for f in listdir(dir) if isfile(join(dir, f))]
 #print (files_in_dir)
 
@@ -90,6 +89,7 @@ stemmed_text = [stemmer.stem(word) for word in filtered_sentence]
 
 from collections import Counter
 counts = Counter(stemmed_text)
+print(counts)
 
 #----------------------------------
 #--- PRINT DURATION OF ANALYSIS ---
@@ -104,10 +104,10 @@ print("Analysedauer: ", analyse_dauer)
 #--- PLOTTING AREA ---
 #---------------------
 
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import numpy as np
+# import matplotlib.pyplot as plt
+# import matplotlib as mpl
+# import numpy as np
 
-x = np.linspace(0, 20, 100)
-plt.plot(x, np.cos(x))
-plt.show()
+# x = np.linspace(0, 20, 100)
+# plt.plot(x, np.cos(x))
+# plt.show()

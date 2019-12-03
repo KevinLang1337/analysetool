@@ -28,14 +28,13 @@ files_in_dir = [f for f in listdir(dir) if isfile(join(dir, f))]
 #     print(line.rstrip())
 # obj.close()
 
-#-------------------
-# #fp = open('../Testdatei.pdf', 'rb')
-
 number_files = len(files_in_dir)
 dateTimeObj = datetime.now()
 
-
 print("Analyse von ", number_files, " Dokument/en wird gestartet...")
+#-----------------------------------
+#--- EXTRACT TEXT FROM DOCUMENTS ---
+#-----------------------------------
 
 extracted_text = ''
 for file in files_in_dir:
@@ -61,10 +60,10 @@ for file in files_in_dir:
                 extracted_text += lt_obj.get_text()
 
 print("Analyse beendet")
-#print(extracted_text)
-  
-#example_sent = "This is a sample sentence, showing off the stop words filtration."
-  
+#--------------------------------------------
+#--- DELETE STOPWORDS FROM EXTRACTED TEXT ---
+#--------------------------------------------
+
 stop_words = set(stopwords.words('german')) 
 stopword_extension = ['(', ')','.',':',',',';','!','?','´','"','“','„','»', '«', '–', '—','•'] 
 stop_words.update(stopword_extension) # -- erweitert die Stoppwortliste
@@ -80,8 +79,9 @@ for w in word_tokens:
     if w not in stop_words: 
         filtered_sentence.append(w) 
   
-#print(word_tokens) 
-#print(filtered_sentence) 
+#----------------------------
+#--- USE STEMMING ON TEXT ---
+#----------------------------
 
 from nltk.stem.snowball import SnowballStemmer
 stemmer = SnowballStemmer('german')
@@ -90,11 +90,24 @@ stemmed_text = [stemmer.stem(word) for word in filtered_sentence]
 
 from collections import Counter
 counts = Counter(stemmed_text)
-print(counts)
 
-#------- ANALYSEDAUER ----------
+#----------------------------------
+#--- PRINT DURATION OF ANALYSIS ---
+#----------------------------------
 
 dateTimeObjEnd = datetime.now()
 
 analyse_dauer = dateTimeObjEnd - dateTimeObj
 print("Analysedauer: ", analyse_dauer)
+
+#---------------------
+#--- PLOTTING AREA ---
+#---------------------
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import numpy as np
+
+x = np.linspace(0, 20, 100)
+plt.plot(x, np.cos(x))
+plt.show()

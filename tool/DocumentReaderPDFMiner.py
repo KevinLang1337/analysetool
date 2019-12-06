@@ -1,3 +1,5 @@
+from collections import Counter
+from nltk.stem.snowball import SnowballStemmer
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfpage import PDFPage
@@ -8,15 +10,16 @@ from pdfminer.layout import LAParams, LTTextBox, LTTextLine
 from os import listdir
 from os.path import isfile, join
 
-from nltk.corpus import stopwords 
-from nltk.tokenize import word_tokenize 
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 from datetime import datetime
 
 import nltk
 # nltk.download('stopwords') #MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
 # nltk.download('punkt') #MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
-
+# https://blog.ekbana.com/pre-processing-text-in-python-ad13ea544dae nochmal anschauen
+# https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
 
 dir = "tool/documents/"
 files_in_dir = [f for f in listdir(dir) if isfile(join(dir, f))]
@@ -31,9 +34,9 @@ number_files = len(files_in_dir)
 dateTimeObj = datetime.now()
 
 print("Analyse von ", number_files, " Dokument/en wird gestartet...")
-#-----------------------------------
-#--- EXTRACT TEXT FROM DOCUMENTS ---
-#-----------------------------------
+# -----------------------------------
+# --- EXTRACT TEXT FROM DOCUMENTS ---
+# -----------------------------------
 
 extracted_text = ''
 for file in files_in_dir:
@@ -42,14 +45,13 @@ for file in files_in_dir:
     parser = PDFParser(fp)
     doc = PDFDocument(parser)
     parser.set_document(doc)
-    #doc.set_parser(parser)
+    # doc.set_parser(parser)
     rsrcmgr = PDFResourceManager()
     laparams = LAParams()
     laparams.char_margin = 1.0
     laparams.word_margin = 1.0
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
-    
 
     for page in PDFPage.create_pages(doc):
         interpreter.process_page(page)
@@ -59,50 +61,64 @@ for file in files_in_dir:
                 extracted_text += lt_obj.get_text()
 
 print("Analyse beendet")
-#--------------------------------------------
-#--- DELETE STOPWORDS FROM EXTRACTED TEXT ---
-#--------------------------------------------
 
-stop_words = set(stopwords.words('german')) 
-stopword_extension = ['(', ')','.',':',',',';','!','?','´','"','“','„','»', '«', '–', '—','•'] 
-stop_words.update(stopword_extension) # -- erweitert die Stoppwortliste
+# --------------------------------------------
+# --- DELETE NUMBERS FROM EXTRACTED TEXT ---
+# --------------------------------------------
+
+extracted_text = ''.join(c for c in extracted_text if not c.isdigit())
+
+# --------------------------------------------
+# --- DELETE STOPWORDS FROM EXTRACTED TEXT ---
+# --------------------------------------------
+
+stop_words = set(stopwords.words('german'))
+stopword_extension = ['(', ')', '.', ':', ',', ';', '!', '?', '´', '"', '“', '„', '»', '«',
+                      '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor']
+stop_words.update(stopword_extension)  # -- erweitert die Stoppwortliste
+
+word_tokens = word_tokenize(extracted_text)                   
+
+filtered_sentence = [w for w in word_tokens if not w in stop_words]
+
+filtered_sentence = []
 
 
-word_tokens = word_tokenize(extracted_text) 
-  
-filtered_sentence = [w for w in word_tokens if not w in stop_words] 
-  
-filtered_sentence = [] 
-  
-for w in word_tokens: 
-    if w not in stop_words: 
-        filtered_sentence.append(w) 
-  
-#----------------------------
-#--- USE STEMMING ON TEXT ---
-#----------------------------
+# IF WORDS ARE NOT STOPWORD AND HAVE MORE CHARACTER THAN 3
+for w in word_tokens:
+    if w not in stop_words and len(w) > 3:
+        filtered_sentence.append(w)
 
-from nltk.stem.snowball import SnowballStemmer
+deleted_words = len(word_tokens) - len(filtered_sentence)
+print("Stopwords deleted: ", deleted_words)
+
+# ----------------------------
+# --- USE STEMMING ON TEXT ---
+# ----------------------------
+
 stemmer = SnowballStemmer('german')
 stemmed_text = [stemmer.stem(word) for word in filtered_sentence]
+stemmed_text.sort(key=len, reverse=True)
 #print(stemmed_text)
 
-from collections import Counter
 counts = Counter(stemmed_text)
-print(counts)
 
-#----------------------------------
-#--- PRINT DURATION OF ANALYSIS ---
-#----------------------------------
+print('Most common:', counts.most_common(40))  # SHOWS 10 MOST COMMON TUPLE
+
+# print(counts)
+
+# ----------------------------------
+# --- PRINT DURATION OF ANALYSIS ---
+# ----------------------------------
 
 dateTimeObjEnd = datetime.now()
 
 analyse_dauer = dateTimeObjEnd - dateTimeObj
 print("Analysedauer: ", analyse_dauer)
 
-#---------------------
-#--- PLOTTING AREA ---
-#---------------------
+# ---------------------
+# --- PLOTTING AREA ---
+# ---------------------
 
 # import matplotlib.pyplot as plt
 # import matplotlib as mpl
@@ -111,3 +127,4 @@ print("Analysedauer: ", analyse_dauer)
 # x = np.linspace(0, 20, 100)
 # plt.plot(x, np.cos(x))
 # plt.show()
+

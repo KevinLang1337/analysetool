@@ -16,8 +16,8 @@ from nltk.tokenize import word_tokenize
 from datetime import datetime
 
 import nltk
-# nltk.download('stopwords') #MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
-# nltk.download('punkt') #MUSS INITIAL EINMAL AUSGEFÜHRT WERDEN
+nltk.download('stopwords', quiet=True)
+nltk.download('punkt', quiet=True)
 # https://blog.ekbana.com/pre-processing-text-in-python-ad13ea544dae nochmal anschauen
 # https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
 
@@ -34,6 +34,7 @@ number_files = len(files_in_dir)
 dateTimeObj = datetime.now()
 
 print("Analyse von ", number_files, " Dokument/en wird gestartet...")
+
 # -----------------------------------
 # --- EXTRACT TEXT FROM DOCUMENTS ---
 # -----------------------------------

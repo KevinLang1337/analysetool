@@ -16,6 +16,7 @@ from nltk.tokenize import word_tokenize
 from datetime import datetime
 
 import nltk
+
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
 # https://blog.ekbana.com/pre-processing-text-in-python-ad13ea544dae nochmal anschauen
@@ -61,10 +62,19 @@ for file in files_in_dir:
             if isinstance(lt_obj, LTTextBox) or isinstance(lt_obj, LTTextLine):
                 extracted_text += lt_obj.get_text()
 
-print("Analyse beendet")
+# --------------------------------------------
+# --- USE LEMMATIZATION ON EXTRACTED TEXT ----
+# --------------------------------------------
+
+import spacy
+nlp = spacy.load('de_core_news_sm')
+doc = nlp(extracted_text)
+extracted_text = " ".join([token.lemma_ for token in doc])
+
+word_tokens = word_tokenize(extracted_text) 
 
 # --------------------------------------------
-# --- DELETE NUMBERS FROM EXTRACTED TEXT ---
+# --- DELETE NUMBERS FROM EXTRACTED TEXT -----
 # --------------------------------------------
 
 extracted_text = ''.join(c for c in extracted_text if not c.isdigit())
@@ -78,7 +88,7 @@ stopword_extension = ['(', ')', '.', ':', ',', ';', '!', '?', '´', '"', '“', 
                       '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor']
 stop_words.update(stopword_extension)  # -- erweitert die Stoppwortliste
 
-word_tokens = word_tokenize(extracted_text)                   
+                  
 
 filtered_sentence = [w for w in word_tokens if not w in stop_words]
 
@@ -93,18 +103,18 @@ for w in word_tokens:
 deleted_words = len(word_tokens) - len(filtered_sentence)
 print("Stopwords deleted: ", deleted_words)
 
-# ----------------------------
-# --- USE STEMMING ON TEXT ---
-# ----------------------------
+# # ----------------------------
+# # --- USE STEMMING ON TEXT ---
+# # ----------------------------
 
-stemmer = SnowballStemmer('german')
-stemmed_text = [stemmer.stem(word) for word in filtered_sentence]
-stemmed_text.sort(key=len, reverse=True)
-#print(stemmed_text)
+# stemmer = SnowballStemmer('german')
+# stemmed_text = [stemmer.stem(word) for word in filtered_sentence]
+# stemmed_text.sort(key=len, reverse=True)
+# #print(stemmed_text)
+# counts = Counter(stemmed_text)
 
-counts = Counter(stemmed_text)
-
-print('Most common:', counts.most_common(40))  # SHOWS 10 MOST COMMON TUPLE
+counts = Counter(filtered_sentence)
+print('Most common:', counts.most_common(40))  # SHOWS 40 MOST COMMON TUPLE
 
 # print(counts)
 
@@ -115,6 +125,7 @@ print('Most common:', counts.most_common(40))  # SHOWS 10 MOST COMMON TUPLE
 dateTimeObjEnd = datetime.now()
 
 analyse_dauer = dateTimeObjEnd - dateTimeObj
+print("Analyse beendet")
 print("Analysedauer: ", analyse_dauer)
 
 # ---------------------

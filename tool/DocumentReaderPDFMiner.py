@@ -118,6 +118,21 @@ print('Most common:', counts.most_common(40))  # SHOWS 40 MOST COMMON TUPLE
 
 # print(counts)
 
+# -----------------------------------
+# --- LATENT DIRICHLET ALLOCATION ---
+# -----------------------------------
+
+# https://rstudio-pubs-static.s3.amazonaws.com/79360_850b2a69980c4488b1db95987a24867a.html
+# TODO: Stopwords, Stemming usw. für jedes Dokument einzeln machen. Dann die Liste mit Token einer anderen Liste hinzufügen
+# from gensim import corpora, models
+
+# dictionary = corpora.Dictionary(filtered_sentence)
+# corpus = [dictionary.doc2bow(text) for text in filtered_sentence]
+# print(corpus[0])
+ 
+
+
+
 # ----------------------------------
 # --- PRINT DURATION OF ANALYSIS ---
 # ----------------------------------

@@ -5,4 +5,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('konfiguration/', views.konfiguration, name='konfiguration'),
     path('webcrawler/', views.webcrawler, name='webcrawler'),
+    path('webcrawler/',views.change, name='change'),
 ]

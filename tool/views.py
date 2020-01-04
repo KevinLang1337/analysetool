@@ -28,7 +28,7 @@ nltk.download('punkt', quiet=True)
 
 # Create your views here.
 
-from analysetool.DocumentReaderPDFMiner import process_pdf
+from tool.DocumentReaderPDFMiner import process_pdf
 
 def konfiguration(request):
     return render(request, 'konfiguration.html')

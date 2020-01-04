@@ -18,6 +18,7 @@ from nltk.tokenize import word_tokenize
 from datetime import datetime
 
 import nltk
+import logging
 
 
 nltk.download('stopwords', quiet=True)
@@ -31,11 +32,10 @@ def konfiguration(request):
     return render(request, 'konfiguration.html')
 
 def webcrawler(request):
+    if 'crawlingButton' in request.GET:
+        logging.debug("Hallo Keks!")
     return render(request, 'webcrawler.html')
-
-def change(request):
-    print("Angekommen")
-    return "Angekommen"    
+  
 
 def index(request):
     # Render the HTML template index.html with the data in the context variable

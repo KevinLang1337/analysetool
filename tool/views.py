@@ -20,8 +20,6 @@ from datetime import datetime
 import nltk
 import logging
 
-import sys, os
-sys.path.append('C:/Users/Kevin Lang/Documents/Uni/Analysetool/analysetool/tool/')
 
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
@@ -30,7 +28,7 @@ nltk.download('punkt', quiet=True)
 
 # Create your views here.
 
-from DocumentReaderPDFMiner import process_pdf
+from analysetool.DocumentReaderPDFMiner import process_pdf
 
 def konfiguration(request):
     return render(request, 'konfiguration.html')

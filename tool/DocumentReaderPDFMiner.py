@@ -16,40 +16,33 @@ from nltk.tokenize import word_tokenize
 
 from datetime import datetime
 
-import nltk, logging
+import nltk, logging, spacy
 
 def process_pdf():
-    logging.debug("Analyse wird gestartet...")
-
+   
     nltk.download('stopwords', quiet=True)
     nltk.download('punkt', quiet=True)
 
-    dir = "tool/documents/"
-    files_in_dir = [f for f in listdir(dir) if isfile(join(dir, f))]
+    dir = "tool/documents/" # Directory to stored documents
+    files_in_dir = [f for f in listdir(dir) if isfile(join(dir, f))] # all files in the directory
     #print (files_in_dir)
-
-    # obj = open('C:/Users/lanki/Documents/Uni/Semester 4/Masterarbeit/Test-Daten/Funktionsfähig/ipsum.txt', encoding="utf8")
-    # for line in obj:
-    #     print(line.rstrip())
-    # obj.close()
-
-    number_files = len(files_in_dir)
-    dateTimeObj = datetime.now()
+    number_files = len(files_in_dir) # amount of files in the directory
+    dateTimeObj = datetime.now() # first timestamp for the duration of the analysis
 
     print("Analyse von ", number_files, " Dokument/en wird gestartet...")
+
 
     # -----------------------------------
     # --- EXTRACT TEXT FROM DOCUMENTS ---
     # -----------------------------------
 
     extracted_text = ''
+    #LOOPS EVERY PDF IN THE DIRECTORY AND STORES THE TEXT TO extracted_text
     for file in files_in_dir:
-        #print("Analyse gestartet")
         fp = open(dir+file, 'rb')
         parser = PDFParser(fp)
         doc = PDFDocument(parser)
         parser.set_document(doc)
-        # doc.set_parser(parser)
         rsrcmgr = PDFResourceManager()
         laparams = LAParams()
         laparams.char_margin = 1.0
@@ -64,16 +57,6 @@ def process_pdf():
                 if isinstance(lt_obj, LTTextBox) or isinstance(lt_obj, LTTextLine):
                     extracted_text += lt_obj.get_text()
 
-    # --------------------------------------------
-    # --- USE LEMMATIZATION ON EXTRACTED TEXT ----
-    # --------------------------------------------
-
-    import spacy
-    nlp = spacy.load('de_core_news_sm')
-    doc = nlp(extracted_text)
-    extracted_text = " ".join([token.lemma_ for token in doc])
-
-    word_tokens = word_tokenize(extracted_text) 
 
     # --------------------------------------------
     # --- DELETE NUMBERS FROM EXTRACTED TEXT -----
@@ -85,40 +68,34 @@ def process_pdf():
     # --- DELETE STOPWORDS FROM EXTRACTED TEXT ---
     # --------------------------------------------
 
-    stop_words = set(stopwords.words('german'))
+    stop_words = set(stopwords.words('german')) # model for german stopwords
     stopword_extension = ['(', ')', '.', ':', ',', ';', '!', '?', '´', '"', '“', '„', '»', '«',
                         '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor']
-    stop_words.update(stopword_extension)  # -- erweitert die Stoppwortliste
+    stop_words.update(stopword_extension)  # expands the list of stopwords
 
-                    
+    word_tokens = word_tokenize(extracted_text) 
 
-    filtered_sentence = [w for w in word_tokens if not w in stop_words]
-
-    filtered_sentence = []
-
+    filtered_text = []
 
     # IF WORDS ARE NOT STOPWORD AND HAVE MORE CHARACTER THAN 3
     for w in word_tokens:
         if w not in stop_words and len(w) > 3:
-            filtered_sentence.append(w)
+            filtered_text.append(w)
 
-    deleted_words = len(word_tokens) - len(filtered_sentence)
+    # --------------------------------------------
+    # --- USE LEMMATIZATION ON EXTRACTED TEXT ----
+    # --------------------------------------------
+
+    nlp = spacy.load('de_core_news_sm') # model for german texts
+    doc = nlp(extracted_text)
+    #extracted_text = " ".join([token.lemma_ for token in doc])
+
+    deleted_words = len(word_tokens) - len(filtered_text) # amount of deleted words
     print("Stopwords deleted: ", deleted_words)
 
-    # # ----------------------------
-    # # --- USE STEMMING ON TEXT ---
-    # # ----------------------------
-
-    # stemmer = SnowballStemmer('german')
-    # stemmed_text = [stemmer.stem(word) for word in filtered_sentence]
-    # stemmed_text.sort(key=len, reverse=True)
-    # #print(stemmed_text)
-    # counts = Counter(stemmed_text)
-
-    counts = Counter(filtered_sentence)
+    counts = Counter(filtered_text)
     print('Most common:', counts.most_common(40))  # SHOWS 40 MOST COMMON TUPLE
 
-    # print(counts)
 
     # -----------------------------------
     # --- LATENT DIRICHLET ALLOCATION ---
@@ -128,11 +105,9 @@ def process_pdf():
     # TODO: Stopwords, Stemming usw. für jedes Dokument einzeln machen. Dann die Liste mit Token einer anderen Liste hinzufügen
     # from gensim import corpora, models
 
-    # dictionary = corpora.Dictionary(filtered_sentence)
-    # corpus = [dictionary.doc2bow(text) for text in filtered_sentence]
+    # dictionary = corpora.Dictionary(filtered_text)
+    # corpus = [dictionary.doc2bow(text) for text in filtered_text]
     # print(corpus[0])
-    
-
 
 
     # ----------------------------------
@@ -145,15 +120,4 @@ def process_pdf():
     print("Analyse beendet")
     print("Analysedauer: ", analyse_dauer)
 
-    # ---------------------
-    # --- PLOTTING AREA ---
-    # ---------------------
-
-    # import matplotlib.pyplot as plt
-    # import matplotlib as mpl
-    # import numpy as np
-
-    # x = np.linspace(0, 20, 100)
-    # plt.plot(x, np.cos(x))
-    # plt.show()
 

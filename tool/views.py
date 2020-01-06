@@ -16,6 +16,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 from datetime import datetime
+from django.http import HttpResponse
 
 import nltk
 import logging
@@ -31,14 +32,18 @@ nltk.download('punkt', quiet=True)
 from tool.DocumentReaderPDFMiner import process_pdf
 
 def konfiguration(request):
-    return render(request, 'konfiguration.html')
+    if request.is_ajax():
+        logging.debug("Hallo Keks!")
+        process_pdf()
+        return render(request, 'konfiguration.html')
+    else: return render(request, 'konfiguration.html')
+
 
 def webcrawler(request):
-    if 'crawlingButton' in request.GET:
-        #logging.debug("Hallo Keks!")
-        process_pdf()
-
-    return render(request, 'webcrawler.html')
+    if request.is_ajax():
+        return HttpResponse('Hallo')
+    else: 
+        return render(request, 'webcrawler.html')
   
 
 def index(request):

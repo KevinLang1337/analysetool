@@ -1,6 +1,5 @@
 # Test Push
 from collections import Counter
-from nltk.stem.snowball import SnowballStemmer
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdfpage import PDFPage
@@ -11,34 +10,25 @@ from pdfminer.layout import LAParams, LTTextBox, LTTextLine
 from os import listdir
 from os.path import isfile, join
 
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-
 from datetime import datetime
 
-import nltk, logging, spacy
+import logging
 
 def process_pdf():
-   
-    nltk.download('stopwords', quiet=True)
-    nltk.download('punkt', quiet=True)
 
     dir = "tool/documents/" # Directory to stored documents
     files_in_dir = [f for f in listdir(dir) if isfile(join(dir, f))] # all files in the directory
-    #print (files_in_dir)
+    
     number_files = len(files_in_dir) # amount of files in the directory
+    
     dateTimeObj = datetime.now() # first timestamp for the duration of the analysis
 
     print("Analyse von ", number_files, " Dokument/en wird gestartet...")
 
-
-    # -----------------------------------
     # --- EXTRACT TEXT FROM DOCUMENTS ---
-    # -----------------------------------
-
-    extracted_text = ''
-    #LOOPS EVERY PDF IN THE DIRECTORY AND STORES THE TEXT TO extracted_text
     for file in files_in_dir:
+        extracted_text = ''
+
         fp = open(dir+file, 'rb')
         parser = PDFParser(fp)
         doc = PDFDocument(parser)
@@ -57,23 +47,30 @@ def process_pdf():
                 if isinstance(lt_obj, LTTextBox) or isinstance(lt_obj, LTTextLine):
                     extracted_text += lt_obj.get_text()
 
+        text_without_numbers = removeNumbers(extracted_text)
+        text_without_stopwords = removeStopwords(text_without_numbers)
+        lemmatizeTokens(text_without_stopwords)
+        
+# --- DELETE NUMBERS FROM EXTRACTED TEXT -----
+def removeNumbers(text):
+    temp_text = ''.join(c for c in text if not c.isdigit())
+    return temp_text
 
-    # --------------------------------------------
-    # --- DELETE NUMBERS FROM EXTRACTED TEXT -----
-    # --------------------------------------------
+# --- DELETE STOPWORDS FROM EXTRACTED TEXT ---   
+def removeStopwords(text):
+    import nltk
+    from nltk.corpus import stopwords
+    from nltk.tokenize import word_tokenize
 
-    extracted_text = ''.join(c for c in extracted_text if not c.isdigit())
-
-    # --------------------------------------------
-    # --- DELETE STOPWORDS FROM EXTRACTED TEXT ---
-    # --------------------------------------------
+    nltk.download('stopwords', quiet=True)
+    nltk.download('punkt', quiet=True)
 
     stop_words = set(stopwords.words('german')) # model for german stopwords
     stopword_extension = ['(', ')', '.', ':', ',', ';', '!', '?', '´', '"', '“', '„', '»', '«',
                         '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor']
     stop_words.update(stopword_extension)  # expands the list of stopwords
 
-    word_tokens = word_tokenize(extracted_text) 
+    word_tokens = word_tokenize(text) 
 
     filtered_text = []
 
@@ -82,19 +79,42 @@ def process_pdf():
         if w not in stop_words and len(w) > 3:
             filtered_text.append(w)
 
-    # --------------------------------------------
-    # --- USE LEMMATIZATION ON EXTRACTED TEXT ----
-    # --------------------------------------------
+    return filtered_text
+
+
+# --- USE LEMMATIZATION ON EXTRACTED TEXT ----
+def lemmatizeTokens(list_with_tokens):
+    import spacy
 
     nlp = spacy.load('de_core_news_sm') # model for german texts
-    doc = nlp(extracted_text)
+   
+    list_to_str = ' '.join(token for token in list_with_tokens)
+
+    doc = nlp(list_to_str)
+    
+    text = " ".join([token.lemma_ for token in doc])
+
+    # for token in list_with_tokens:
+    #     doc = nlp(token)
+        
+    #     print("Token: ", doc.token)
     #extracted_text = " ".join([token.lemma_ for token in doc])
 
-    deleted_words = len(word_tokens) - len(filtered_text) # amount of deleted words
-    print("Stopwords deleted: ", deleted_words)
+    # counts = Counter(list_with_tokens)
+    
+    # return print('Most common:', counts.most_common(40))  # SHOWS 40 MOST COMMON TUPLE
 
-    counts = Counter(filtered_text)
-    print('Most common:', counts.most_common(40))  # SHOWS 40 MOST COMMON TUPLE
+#################################################################
+# nlp = spacy.load('de_core_news_sm') # model for german texts
+#     doc = nlp(extracted_text)
+#     #extracted_text = " ".join([token.lemma_ for token in doc])
+
+#     deleted_words = len(word_tokens) - len(filtered_text) # amount of deleted words
+#     print("Stopwords deleted: ", deleted_words)
+
+#     counts = Counter(filtered_text)
+#     print('Most common:', counts.most_common(40))  # SHOWS 40 MOST COMMON TUPLE
+#################################################################################
 
 
     # -----------------------------------
@@ -114,10 +134,10 @@ def process_pdf():
     # --- PRINT DURATION OF ANALYSIS ---
     # ----------------------------------
 
-    dateTimeObjEnd = datetime.now()
+    # dateTimeObjEnd = datetime.now()
 
-    analyse_dauer = dateTimeObjEnd - dateTimeObj
-    print("Analyse beendet")
-    print("Analysedauer: ", analyse_dauer)
+    # analyse_dauer = dateTimeObjEnd - dateTimeObj
+    # print("Analyse beendet")
+    # print("Analysedauer: ", analyse_dauer)
 
 

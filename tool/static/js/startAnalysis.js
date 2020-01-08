@@ -1,8 +1,8 @@
 $(document).ready(function(){
-    $(document).on ('submit', '#crawlingButtonFormID',function(e){
+    $(document).on ('submit', '#startButtonFormID',function(e){
         e.preventDefault();
         $.blockUI({
-            message: $('#spinner'),
+            message: $('#spinnerStart'),
             css: {
                 border: '5px solid #add8e6',
                 width: '25%',
@@ -10,9 +10,9 @@ $(document).ready(function(){
         });
                 $.ajax({
                 type:'GET',
-                url:'../konfiguration',
+                url:'../webcrawler',
                 success:function(){
-                    window.location.href="../konfiguration"
+                    window.location.href="../webcrawler"
                 }
             })
      

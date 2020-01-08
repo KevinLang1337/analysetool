@@ -33,15 +33,16 @@ from tool.DocumentReaderPDFMiner import process_pdf
 
 def konfiguration(request):
     if request.is_ajax():
-        logging.debug("Hallo Keks!")
-        process_pdf()
-        return render(request, 'konfiguration.html')
+        logging.debug("Hallo Engel!")
+        
     else: return render(request, 'konfiguration.html')
 
 
 def webcrawler(request):
     if request.is_ajax():
-        return HttpResponse('Hallo')
+        logging.debug("Hallo Keks!")
+        process_pdf()
+        return render(request, 'webcrawler.html')
     else: 
         return render(request, 'webcrawler.html')
   

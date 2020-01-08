@@ -1,6 +1,7 @@
 from nltk.tokenize import word_tokenize
 
-def process_pdf():
+def process_pdf(variable):
+    print(variable)
    
     from pdfminer.pdfparser import PDFParser
     from pdfminer.pdfdocument import PDFDocument

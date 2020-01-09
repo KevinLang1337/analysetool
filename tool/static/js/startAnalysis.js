@@ -31,7 +31,7 @@ function startAnalysis() {
             date_until: $('#date_until').val()
         },
         success: function () {
-            window.location.href = "../webcrawler/";
+            window.location.href = "../ergebnisse/";
         }
     });
 }

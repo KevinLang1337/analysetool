@@ -1,0 +1,175 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>Analysetool</title>{% endblock %}
+
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">Ergebnisse</li>
+{% endblock %}
+
+{% block content %} 
+<body>
+  
+
+    <!-- LEFT COLUMN -->
+    <div class="col-md-3" style="flex-flow: column; display:flex;">
+      <h1 class="title">Ergebnisse</h1>
+
+      <!-- LIST LEFT SIDE-->
+      <ul class="list-group with_scrollbar" style="flex-grow: 1;">
+        <li class="list-group-item">Cras justo odio</li>
+        <li class="list-group-item">Dapibus ac facilisis in</li>
+        <li class="list-group-item">Morbi leo risus</li>
+        <li class="list-group-item">Porta ac consectetur ac</li>
+        <li class="list-group-item">Vestibulum at eros</li>
+      </ul>
+      <!-- BUTTONS LEFT SIDE-->
+      <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
+          class="glyphicon glyphicon-file gly-2x"></span><br>Auswahl öffnen</button>
+      <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
+          class="glyphicon glyphicon-minus gly-2x"></span><br>Auswahl löschen</button>
+    </div>
+
+
+    <!-- MIDDLE COLUMN -->
+    <div class="col-md-6" style="flex-flow: column; display:flex; margin: 0;">
+            <h1 class="title" style="text-align:left;">Zu durchsuchende Webseiten</h1>
+        <div class="row" style="height: 100%;">
+                
+            <div class="col-11 with_scrollbar" style="flex-flow: column; display: flex; margin: 0%;">
+
+      
+      <!-- TABLE MIDDLE -->
+      <table class="table">
+        <thead>
+          <tr>
+            <!-- TABLE HEADER -->
+            <th scope="col">Aktiv</th>
+            <th scope="col">URL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- TABLE ITEMS -->
+          <tr>
+            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
+            <td>Wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwasserwirtschaft_2019</td>
+          </tr>
+          <tr>
+            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
+            <td>Wasserwirtschaft_2019</td>
+          </tr>
+          <tr>
+            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
+            <td>Wasserwirtschaft_2019</td>
+          </tr>
+        </tbody>
+      </table>
+            </div>
+            <div class="col-1" style="margin: 0%; padding:0%">
+                    <div class="btn-group-vertical btn-group-lg" style="margin-left:5%">
+                            <button type="button" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-plus"></span></button>
+                            <button type="button" class="btn btn-primary">
+                                 <span class="glyphicon glyphicon-pencil"></span></button>
+                             <button type="button" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-minus"></span></button>
+                          </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-md-3" style="flex-flow: column; height: 100%; display:flex; width: 50%;">
+
+      <h1 class="title">Informationen</h1>
+      <div class="form-group row">
+
+        <!-- INFORMATION RIGHT SIDE-->
+        <label class="col-6 col-form-label">Dokumente in Verzeichnis: </label>
+        <div class="col-6">
+          <label for="amount_documents" class="col-6 col-form-label" style="margin-bottom: 2%;">XXXX</label>
+        </div>
+
+        <label class="col-6 col-form-label">Frühestes Datum: </label>
+        <div class="col-6">
+          <label for="amount_documents" class="col-6 col-form-label" style="margin-bottom: 2%;">XX.XX.XXXX</label>
+        </div>
+
+        <label class="col-6 col-form-label">Spätestes Datum: </label>
+        <div class="col-6">
+          <label for="amount_documents" class="col-6 col-form-label">XX.XX.XXXX</label>
+        </div>
+      </div>
+
+      <div style="flex-grow: 1;"></div>
+
+      <!-- SAVING LOCATION RESULTS-->
+      <h1 class="title">Speicherort Ergebnisse</h1>
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search for...">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-folder-open"></span></button>
+        </span>
+      </div>
+
+
+      <div style="flex-grow: 1;"></div>
+
+      <h1 class="title" id="EinstellungenID">Einstellungen</h1>
+      <form>
+        <!-- SETTINGS RIGHT SIDE-->
+        <div class="form-group row">
+
+            <label for="timeout_crawling" class="col-6 col-form-label" style="margin-bottom: 2%;">Stoppen nach</label>
+            <div class="col-3">
+                <input type="number" class="form-control" onkeypress="return isNumberKey(event)" id="timeout_crawling";>
+            </div>
+            <label for="timeout_crawling" class="col-3 col-form-label" style="margin-bottom: 2%; text-align: right;">Minuten</label>
+
+          <label for="amount_websites" class="col-6 col-form-label" style="margin-bottom: 2%;">Anzahl Seiten
+            (max.)</label>
+          <div class="col-6">
+            <input type="number" class="form-control" onkeypress="return isNumberKey(event)" id="amount_websites">
+          </div>
+
+          <label for="text_from" class="col-6 col-form-label" style="margin-bottom: 2%;">Texte von</label>
+          <div class="col-6">
+            <div class="input-group date datepicker" data-provide="datepicker" id="date_text_from">
+              <input type="text" class="form-control">
+              <div class="input-group-addon">
+                <span class="glyphicon glyphicon-th"></span>
+              </div>
+            </div>
+          </div>
+
+          <label for="text_from" class="col-6 col-form-label">bis</label>
+          <div class="col-6">
+            <div class="input-group date datepicker" data-provide="datepicker" id="date_text_until">
+              <input type="text" class="form-control">
+              <div class="input-group-addon">
+                <span class="glyphicon glyphicon-th"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div style="flex-grow: 1;"></div>
+      
+   
+      <!-- BUTTON SAVE CONFIGURATION -->
+      <button type="button" class="btn btn-primary btn-lg text-center"
+        style="width: 100%; height: 15%; margin: auto; margin-top: 5%; display: block; white-space: normal;"><span
+          class="glyphicon glyphicon-floppy-disk gly-2x"></span><br>Einstellungen speichern</button>
+
+      <!-- BUTTON START CRAWLING -->
+      <form  method="GET" style="margin-top: 5%">
+          <button  name="crawlingButton" type="submit" class="btn btn-primary btn-lg text-center" style="height: 100%; width: 100%;"
+            style="display: block; white-space: normal;"><span
+              class="fa fa-globe fa-2x"></span><br>Crawlen</button>
+      </form>  
+
+    </div>
+  </body>
+    
+
+{% endblock %}

@@ -33,6 +33,7 @@ nltk.download('punkt', quiet=True)
 
 from tool.DocumentReaderPDFMiner import process_pdf
 
+
 def konfiguration(request):
     if request.is_ajax():
         logging.debug("Hallo Engel!")
@@ -57,8 +58,10 @@ def index(request):
     return render(request, 'index.html')
 
 def ergebnisse(request):
-    # Render the HTML template index.html with the data in the context variable
-    return render(request, 'results.html')
+    
+    
+    choices = {"x": "Mandarin chinese", "value": 1090000000}    
+    return render(request, 'results.html', {'dictionary': choices})
 
    
    

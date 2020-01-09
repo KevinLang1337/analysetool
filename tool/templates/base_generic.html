@@ -18,41 +18,62 @@
     <!-- FONTAWESOME LIBRARY -->
     <!--  jQuery -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.js"></script>
+
     <!-- Bootstrap Date-Picker Plugin -->
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript" src="{% static 'js/datepicker.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/isNumberKey.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/startAnalysis.js' %}"></script>
-    <!-- Wordcloud Plugin -->
-    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
-    <script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/helpfunction.js' %}"></script>
+
 </head>
 
 <body>
+
     <main role="main" style="height: 100%;">
         <div class="container-fluid" style="height:100%; padding:0; margin:0;">
             <header style="height: 7vh;">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb" style="font-size: large;">
+                        <i id="help_button" class="fa fa-question-circle help-button pull-right"></i>
+
                         <li class="breadcrumb-item"><a href="{% url 'index' %}"><i
                                     style="margin-right: 0.5em; color:gray;"
-                                    class="glyphicon glyphicon-home"></i>Hauptmenü</a></li>
+                                    class="glyphicon glyphicon-home"></i>Hauptmenü</a>
+                                    
                         {% block breadcrumb %}
                         {% endblock %}
+
                     </ol>
                 </nav>
+
             </header>
 
             <div class="row" style="height:91vh; padding:0; margin:0;">
                 {% block content %}
                 {% endblock %}
             </div>
+
         </div>
     </main>
 </body>
-
+<div id="help_dialogue" style="display:none; cursor: default"> 
+    <h1>Hilfefunktion</h1>
+    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
+    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
+    <input type="button" id="ok" value="OK!" /> 
+</div> 
 </html>

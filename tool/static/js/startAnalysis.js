@@ -26,7 +26,9 @@ function startAnalysis() {
         data:{
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
             action: 'post',
-            anzahl: $('#amount_topics').val()
+            amount: $('#amount_topics').val(),
+            date_from: $('#date_from').val(),
+            date_until: $('#date_until').val()
         },
         success: function () {
             window.location.href = "../webcrawler/";

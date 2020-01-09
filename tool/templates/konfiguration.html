@@ -9,6 +9,7 @@
 
 {% block content %}
 <!-- LEFT COLUMN -->
+<form id="configForm" method="POST">
 <div class="col-md-3" style="flex-flow: column; display:flex;">
   <h1 class="title">Gespeicherte Konfigurationen</h1>
 
@@ -100,7 +101,7 @@
   <div style="flex-grow: 1;"></div>
 
   <!-- SAVINGLOCATION RESULTS-->
-  <form id="configForm" method="POST">
+  
     {% csrf_token %}
   <h1 class="title">Speicherort Ergebnisse</h1>
   <div class="input-group">
@@ -134,7 +135,7 @@
       <label for="text_from" class="col-6 col-form-label" style="margin-bottom: 2%;">Texte von</label>
       <div class="col-6">
         <div class="input-group date datepicker" data-provide="datepicker" id="date_text_from">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" id="date_from">
           <div class="input-group-addon">
             <span class="glyphicon glyphicon-th"></span>
           </div>
@@ -144,7 +145,7 @@
       <label for="text_from" class="col-6 col-form-label">bis</label>
       <div class="col-6">
         <div class="input-group date datepicker" data-provide="datepicker" id="date_text_until">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" id="date_until">
           <div class="input-group-addon">
             <span class="glyphicon glyphicon-th"></span>
           </div>

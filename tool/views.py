@@ -43,8 +43,10 @@ def konfiguration(request):
 def webcrawler(request):
     if request.is_ajax() and request.POST.get('action') == 'post':
         logging.debug("Hallo Keks!")
-        anzahl=request.POST.get('anzahl')
-        process_pdf(anzahl)
+        amount=request.POST.get('amount')
+        date_from=request.POST.get('date_from')
+        date_until=request.POST.get('date_until')
+        process_pdf(amount, date_from, date_until)
         return render(request, 'webcrawler.html')
     else: 
         return render(request, 'webcrawler.html')

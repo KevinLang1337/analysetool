@@ -74,7 +74,11 @@ def process_pdf(amount, date_from, date_until):
     # --- PRINT DURATION OF ANALYSIS ---
     dateTimeObjEnd = datetime.now()
     analyse_dauer = dateTimeObjEnd - dateTimeObj
-    useLDA(list_of_tokens)
+    
+    
+    print("Anzahl: ", amount)
+
+    useLDA(list_of_tokens, amount)
     print("Analyse beendet")
     print("Analysedauer: ", analyse_dauer)
         
@@ -128,7 +132,7 @@ def lemmatizeTokens(list_with_tokens):
     return word_tokens
 
 # --- LATENT DIRICHLET ALLOCATION ---
-def useLDA(list_of_token):
+def useLDA(list_of_token, amount_topics):
 
     # https://rstudio-pubs-static.s3.amazonaws.com/79360_850b2a69980c4488b1db95987a24867a.html
     # TODO: Stopwords, Stemming usw. für jedes Dokument einzeln machen. Dann die Liste mit Token einer anderen Liste hinzufügen
@@ -141,6 +145,24 @@ def useLDA(list_of_token):
     from gensim import corpora, models
     dictionary = corpora.Dictionary(list_of_token)
     corpus = [dictionary.doc2bow(word) for word in list_of_token]
-    ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=3, id2word = dictionary, passes=20)
 
-    return print(ldamodel.print_topics(num_topics=3, num_words=3))
+    default_amount_topics = 3
+
+    # IF NO AMOUNT IS PROVIDED
+    if amount_topics == "":
+        amount_topics = int(0)
+    # IF AMOUNT IS PROVIDED    
+    elif amount_topics != "":
+        amount_topics = int(amount_topics)
+
+    if amount_topics == 0:
+        print("keine Anzahl angegeben")
+        ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=default_amount_topics, id2word = dictionary, passes=1)
+
+    elif amount_topics > 0:
+        print("Anzahl ", amount_topics, " angegeben!")
+        ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=amount_topics, id2word = dictionary, passes=1)
+    
+    print("")
+    print("#---- TOPICS ----#")
+    return ldamodel.print_topics(num_topics=amount_topics, num_words=10)

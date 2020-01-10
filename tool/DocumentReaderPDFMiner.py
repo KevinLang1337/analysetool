@@ -18,6 +18,7 @@ def process_pdf(amount, date_from, date_until):
     from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
     from pdfminer.converter import PDFPageAggregator
     from pdfminer.layout import LAParams, LTTextBox, LTTextLine
+    from pdfminer.pdfinterp import resolve1
     from os import listdir
     from os.path import isfile, join
     from datetime import datetime
@@ -30,8 +31,8 @@ def process_pdf(amount, date_from, date_until):
 
     number_files = len(files_in_dir)  # amount of files in the directory
 
-    # pb = ProgressBar(total=100, prefix='Analyse', suffix='', decimals=2, length=50, fill='|', zfill='-')
-    # pb.print_progress_bar(2)
+    pb = ProgressBar(total=100, prefix='Seiten zu ', suffix=' extrahiert', decimals=0, length=50, fill='|', zfill='-')
+    
     # time.sleep(5)
 
     print("Analyse von ", number_files, " Dokument/en wird gestartet...")
@@ -65,9 +66,11 @@ def process_pdf(amount, date_from, date_until):
                 if isinstance(lt_obj, LTTextBox) or isinstance(lt_obj, LTTextLine):
                     extracted_text += lt_obj.get_text()
 
-            print("Seite ", page_counter, " extrahiert")
+            number_of_pages = resolve1(doc.catalog['Pages'])['Count']
+            pb.print_progress_bar(100/number_of_pages*page_counter)
             page_counter += 1
 
+        
         text_without_numbers = removeNumbers(extracted_text)
         text_without_stopwords = removeStopwords(text_without_numbers)
         lemmatized_tokens = lemmatizeTokens(text_without_stopwords)
@@ -180,7 +183,7 @@ def useLDA(list_of_token, amount_topics):
     print("")
     print("#---- TOPICS ----#")
 
-    prepareDataForWordcloud(ldamodel, corpus, 10)
+    prepareDataForWordcloud(ldamodel, corpus, 50)
 
     return ldamodel.print_topics(num_topics=amount_topics, num_words=10)
 

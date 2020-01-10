@@ -1,10 +1,17 @@
 from nltk.tokenize import word_tokenize
 
+data = {}
+
+
+def getData():
+    return data
+
+
 def process_pdf(amount, date_from, date_until):
     print(amount)
     print(date_from)
     print(date_until)
-   
+
     from pdfminer.pdfparser import PDFParser
     from pdfminer.pdfdocument import PDFDocument
     from pdfminer.pdfpage import PDFPage
@@ -17,11 +24,11 @@ def process_pdf(amount, date_from, date_until):
     import time
     from console_progressbar import ProgressBar
 
-    
-    dir = "tool/documents/" # Directory to stored documents
-    files_in_dir = [f for f in listdir(dir) if isfile(join(dir, f))] # all files in the directory
-    
-    number_files = len(files_in_dir) # amount of files in the directory
+    dir = "tool/documents/"  # Directory to stored documents
+    files_in_dir = [f for f in listdir(dir) if isfile(
+        join(dir, f))]  # all files in the directory
+
+    number_files = len(files_in_dir)  # amount of files in the directory
 
     # pb = ProgressBar(total=100, prefix='Analyse', suffix='', decimals=2, length=50, fill='|', zfill='-')
     # pb.print_progress_bar(2)
@@ -29,7 +36,7 @@ def process_pdf(amount, date_from, date_until):
 
     print("Analyse von ", number_files, " Dokument/en wird gestartet...")
 
-    dateTimeObj = datetime.now() # first timestamp for the duration of the analysis
+    dateTimeObj = datetime.now()  # first timestamp for the duration of the analysis
 
     list_of_tokens = []
 
@@ -59,8 +66,8 @@ def process_pdf(amount, date_from, date_until):
                     extracted_text += lt_obj.get_text()
 
             print("Seite ", page_counter, " extrahiert")
-            page_counter += 1  
-                    
+            page_counter += 1
+
         text_without_numbers = removeNumbers(extracted_text)
         text_without_stopwords = removeStopwords(text_without_numbers)
         lemmatized_tokens = lemmatizeTokens(text_without_stopwords)
@@ -70,39 +77,38 @@ def process_pdf(amount, date_from, date_until):
         print("")
         file_counter += 1
 
-    
     # --- PRINT DURATION OF ANALYSIS ---
     dateTimeObjEnd = datetime.now()
     analyse_dauer = dateTimeObjEnd - dateTimeObj
-    
-    
-    print("Anzahl: ", amount)
 
     useLDA(list_of_tokens, amount)
     print("Analyse beendet")
     print("Analysedauer: ", analyse_dauer)
-        
+
 # --- DELETE NUMBERS FROM EXTRACTED TEXT -----
+
+
 def removeNumbers(lemmatized_text):
     temp_text = ''.join(c for c in lemmatized_text if not c.isdigit())
     print("Zahlen wurden entfernt")
     return temp_text
 
-# --- DELETE STOPWORDS FROM EXTRACTED TEXT ---   
+# --- DELETE STOPWORDS FROM EXTRACTED TEXT ---
+
+
 def removeStopwords(lemmatized_text):
     import nltk
     from nltk.corpus import stopwords
-    
 
     nltk.download('stopwords', quiet=True)
     nltk.download('punkt', quiet=True)
 
-    stop_words = set(stopwords.words('german')) # model for german stopwords
+    stop_words = set(stopwords.words('german'))  # model for german stopwords
     stopword_extension = ['(', ')', '.', ':', ',', ';', '!', '?', '´', '"', '“', '„', '»', '«',
-                        '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor']
+                          '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor']
     stop_words.update(stopword_extension)  # expands the list of stopwords
 
-    word_tokens = word_tokenize(lemmatized_text) 
+    word_tokens = word_tokenize(lemmatized_text)
 
     filtered_text = []
 
@@ -115,26 +121,32 @@ def removeStopwords(lemmatized_text):
     return filtered_text
 
 # --- USE LEMMATIZATION ON EXTRACTED TEXT ----
+
+
 def lemmatizeTokens(list_with_tokens):
     import spacy
     from collections import Counter
 
-    nlp = spacy.load('de_core_news_sm') # model for german texts
-   
+    nlp = spacy.load('de_core_news_sm')  # model for german texts
+
     list_to_str = ' '.join(token for token in list_with_tokens)
 
     doc = nlp(list_to_str)
-    
+
     lemmatized_text = " ".join([token.lemma_ for token in doc])
-    word_tokens = word_tokenize(lemmatized_text) 
-    
+    word_tokens = word_tokenize(lemmatized_text)
+
     print("Lemmatisierung durchgeführt")
     return word_tokens
 
 # --- LATENT DIRICHLET ALLOCATION ---
+
+
 def useLDA(list_of_token, amount_topics):
 
     # https://rstudio-pubs-static.s3.amazonaws.com/79360_850b2a69980c4488b1db95987a24867a.html
+    # https://towardsdatascience.com/topic-modelling-in-python-with-nltk-and-gensim-4ef03213cd21
+    # pyLDAvis zur Interpretation?
     # TODO: Stopwords, Stemming usw. für jedes Dokument einzeln machen. Dann die Liste mit Token einer anderen Liste hinzufügen
     # from gensim import corpora, models
 
@@ -151,18 +163,60 @@ def useLDA(list_of_token, amount_topics):
     # IF NO AMOUNT IS PROVIDED
     if amount_topics == "":
         amount_topics = int(0)
-    # IF AMOUNT IS PROVIDED    
+    # IF AMOUNT IS PROVIDED
     elif amount_topics != "":
         amount_topics = int(amount_topics)
 
     if amount_topics == 0:
         print("keine Anzahl angegeben")
-        ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=default_amount_topics, id2word = dictionary, passes=1)
+        ldamodel = gensim.models.ldamodel.LdaModel(
+            corpus, num_topics=default_amount_topics, id2word=dictionary, passes=1)
 
     elif amount_topics > 0:
         print("Anzahl ", amount_topics, " angegeben!")
-        ldamodel = gensim.models.ldamodel.LdaModel(corpus, num_topics=amount_topics, id2word = dictionary, passes=1)
-    
+        ldamodel = gensim.models.ldamodel.LdaModel(
+            corpus, num_topics=amount_topics, id2word=dictionary, passes=1)
+
     print("")
     print("#---- TOPICS ----#")
+
+    prepareDataForWordcloud(ldamodel, corpus, 10)
+
     return ldamodel.print_topics(num_topics=amount_topics, num_words=10)
+
+def prepareDataForWordcloud(ldamodel, corpus, amount_items):
+    
+    dictionary_keys = ldamodel.id2word
+    
+    temp_data = []
+    for temp_corpus in corpus:
+        for x in temp_corpus:
+            temp_x = x
+            temp_key = dictionary_keys[temp_x[0]]
+            temp_value = temp_x[1]
+            temp_tuple = (temp_key, temp_value)
+            temp_data.append(temp_tuple)
+            #data.update(temp_pair)
+
+    temp_data = sort_tuple(temp_data)
+    if len(temp_data) >= amount_items:
+        data.update(dict(temp_data[0:amount_items]))
+    elif len(temp_data) < amount_items:
+        data.update(dict(temp_data[0:len(temp_data)]))
+
+def sort_tuple(tup):  
+      
+    # getting length of list of tuples 
+    lst = len(tup)  
+    for i in range(0, lst):  
+          
+        for j in range(0, lst-i-1):  
+            if (tup[j][1] > tup[j + 1][1]):  
+                temp = tup[j]  
+                tup[j] = tup[j + 1]  
+                tup[j + 1] = temp
+
+    tup.reverse()
+    return tup  
+    
+    

@@ -31,7 +31,7 @@ nltk.download('punkt', quiet=True)
 
 # Create your views here.
 
-from tool.DocumentReaderPDFMiner import process_pdf
+from tool.DocumentReaderPDFMiner import process_pdf, getData
 
 
 def konfiguration(request):
@@ -58,10 +58,12 @@ def index(request):
     return render(request, 'index.html')
 
 def ergebnisse(request):
+    import json
+
+    data = getData()  
+    js_data = json.dumps(data)
     
-    
-    choices = {"x": "Mandarin chinese", "value": 1090000000}    
-    return render(request, 'results.html', {'dictionary': choices})
+    return render(request, 'results.html', {'dictionary': js_data})
 
    
    

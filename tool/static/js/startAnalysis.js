@@ -4,6 +4,10 @@ $(document).ready(function(){
         if(buttonIndex==1){
             startAnalysis();
         }
+        else if(buttonIndex==2){
+            upload_config();
+        }
+        else return false;
         })
         
     })

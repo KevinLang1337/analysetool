@@ -9,61 +9,28 @@
 {% block content %}
 
 <body>
-  <button onclick="png()">PNG</button>
+  <div id="visualization" style="width: 100%; height: 100vh"></div>
+  {% load static %}
+  <script src="{% static 'foamtree-3.4.9/carrotsearch.foamtree.js' %}" type="text/javascript"></script>
+  <div>
 
-  <div id="container"></div>
-  <script>
-    var dict = new Object();
-    var dic = '{{dictionary}}'
-    dic = $('<div>').html(dic)[0].textContent;
-
-    anychart.onDocumentReady(function () {
-
-      var result = JSON.parse(dic);
-      var result_length = Object.keys(result).length
-
-      var keys = Object.keys(result)
-      var values = Object.values(result)
-
-      var data = []
-
-      for (var i = 0; i < result_length; i++) {
-        var key_temp = keys[i]
-        var value_temp = values[i]
-
-        key_value_pair = { "x": key_temp, value: value_temp }
-        data.push(key_value_pair)
-      }
-
-      // create a tag (word) cloud chart
-      chart = anychart.tagCloud(data);
-
-      chart.data(data);
-      // set a chart title
-      chart.title('50 häufigste Wörter')
-      // set an array of angles at which the words will be laid out
-      chart.angles([0])
-      // enable a color range
-
-      // set the color range length
-      chart.colorRange().length('80%');
-
-      // display the word cloud chart
-      chart.container("container").draw();
+    <script>
       
-    });
+      var dic = '{{dict_foamtree}}'
+      dic = $('<div>').html(dic)[0].textContent;
+      var obj = JSON.parse(dic);
 
-    // save the chart as png
-    function png() {
-      chart.saveAsPng({
-        "width": 2000,
-        "height": 2000,
-        "quality": 1,
-        "filename": "Wordcloud"
+      window.addEventListener("load", function () {
+
+        var foamtree = new CarrotSearchFoamTree({
+          id: "visualization"
+        });
+
+        foamtree.set("dataObject", obj)
+
       });
-    };
-    
-  </script>
+    </script>
+  </div>
 </body>
 
 

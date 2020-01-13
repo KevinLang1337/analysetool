@@ -1,10 +1,16 @@
 from nltk.tokenize import word_tokenize
 
-data = {}
+data_wordcloud = {}
+data_temp = dict()
 
+def data_to_json():
+    return 0
 
-def getData():
-    return data
+def get_data_temp():
+    return data_temp
+
+def get_data_wordcloud():
+    return data_wordcloud
 
 
 def process_pdf(amount, date_from, date_until):
@@ -173,19 +179,38 @@ def useLDA(list_of_token, amount_topics):
     if amount_topics == 0:
         print("keine Anzahl angegeben")
         ldamodel = gensim.models.ldamodel.LdaModel(
-            corpus, num_topics=default_amount_topics, id2word=dictionary, passes=1)
+            corpus, num_topics=default_amount_topics, id2word=dictionary, random_state=100,
+                                           update_every=1,
+                                           chunksize=10,
+                                           passes=10,
+                                           alpha='symmetric',
+                                           iterations=100,
+                                           per_word_topics=True)
 
     elif amount_topics > 0:
         print("Anzahl ", amount_topics, " angegeben!")
         ldamodel = gensim.models.ldamodel.LdaModel(
-            corpus, num_topics=amount_topics, id2word=dictionary, passes=1)
+            corpus, num_topics=amount_topics, id2word=dictionary, random_state=100,
+                                           update_every=1,
+                                           chunksize=10,
+                                           passes=10,
+                                           alpha='symmetric',
+                                           iterations=100,
+                                           per_word_topics=True)
 
     print("")
     print("#---- TOPICS ----#")
 
-    prepareDataForWordcloud(ldamodel, corpus, 50)
+    print(prepareDataForWordcloud(ldamodel, corpus, 50))
 
-    return ldamodel.print_topics(num_topics=amount_topics, num_words=10)
+    
+    for x in range(0, amount_topics):
+        data_temp.update({"groups":[
+        {"id": "1", "label": "Thema 1"}]})
+
+    # prepareDataForWordcloud(ldamodel, corpus, 50)
+
+    return ldamodel.print_topics()
 
 def prepareDataForWordcloud(ldamodel, corpus, amount_items):
     
@@ -203,9 +228,11 @@ def prepareDataForWordcloud(ldamodel, corpus, amount_items):
 
     temp_data = sort_tuple(temp_data)
     if len(temp_data) >= amount_items:
-        data.update(dict(temp_data[0:amount_items]))
+        data_wordcloud.update(dict(temp_data[0:amount_items]))
     elif len(temp_data) < amount_items:
-        data.update(dict(temp_data[0:len(temp_data)]))
+        data_wordcloud.update(dict(temp_data[0:len(temp_data)]))
+
+    return temp_data
 
 def sort_tuple(tup):  
       

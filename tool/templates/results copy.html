@@ -1,0 +1,71 @@
+{% extends "base_generic.html" %}
+{% block title %}<title>Analysetool</title>{% endblock %}
+
+
+{% block breadcrumb %}
+<li class="breadcrumb-item active" aria-current="page">Ergebnisse</li>
+{% endblock %}
+
+{% block content %}
+
+<body>
+  <button onclick="png()">PNG</button>
+
+  <div id="container"></div>
+  <script>
+    var dict = new Object();
+    var dic = '{{dict_wordcloud}}'
+    dic = $('<div>').html(dic)[0].textContent;
+
+    anychart.onDocumentReady(function () {
+
+      var result = JSON.parse(dic);
+      var result_length = Object.keys(result).length
+
+      var keys = Object.keys(result)
+      var values = Object.values(result)
+
+      var data = []
+
+      for (var i = 0; i < result_length; i++) {
+        var key_temp = keys[i]
+        var value_temp = values[i]
+
+        key_value_pair = { "x": key_temp, value: value_temp }
+        data.push(key_value_pair)
+      }
+
+      // create a tag (word) cloud chart
+      chart = anychart.tagCloud(data);
+
+      chart.data(data);
+      // set a chart title
+      chart.title('50 häufigste Wörter')
+      // set an array of angles at which the words will be laid out
+      chart.angles([0])
+      // enable a color range
+
+      // set the color range length
+      chart.colorRange().length('80%');
+
+      // display the word cloud chart
+      chart.container("container").draw();
+      
+    });
+
+    
+    // save the chart as png
+    function png() {
+      chart.saveAsPng({
+        "width": 2000,
+        "height": 2000,
+        "quality": 1,
+        "filename": "Wordcloud"
+      });
+    };
+    
+  </script>
+</body>
+
+
+{% endblock %}

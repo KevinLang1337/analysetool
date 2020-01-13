@@ -1,3 +1,4 @@
+from tool.DocumentReaderPDFMiner import process_pdf, get_data_wordcloud, get_data_temp
 from django.shortcuts import render
 from django.views import generic
 from collections import Counter
@@ -31,39 +32,49 @@ nltk.download('punkt', quiet=True)
 
 # Create your views here.
 
-from tool.DocumentReaderPDFMiner import process_pdf, getData
-
 
 def konfiguration(request):
     if request.is_ajax():
         logging.debug("Hallo Engel!")
-        
+
     else: return render(request, 'konfiguration.html')
+
 
 @csrf_exempt
 def webcrawler(request):
     if request.is_ajax() and request.POST.get('action') == 'post':
         logging.debug("Hallo Keks!")
-        amount=request.POST.get('amount')
-        date_from=request.POST.get('date_from')
-        date_until=request.POST.get('date_until')
+        amount = request.POST.get('amount')
+        date_from = request.POST.get('date_from')
+        date_until = request.POST.get('date_until')
         process_pdf(amount, date_from, date_until)
         return render(request, 'webcrawler.html')
-    else: 
+    else:
         return render(request, 'webcrawler.html')
-  
+
 
 def index(request):
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html')
 
+
 def ergebnisse(request):
     import json
 
-    data = getData()  
-    js_data = json.dumps(data)
-    
-    return render(request, 'results.html', {'dictionary': js_data})
+    data_foamtree = {"groups": [
+        {"id": "1", "label": "Thema 1", "groups": [
+          {"id": "1.1", "label": "more", "groups": [
+              {"id":"1.1.1", "label":"Beispieldokument.pdf"}, {"id":"1.1.1", "label":"InteressantesDokument2019.pdf"}
 
-   
-   
+          ]},
+          {"id": "1.2", "label": "text"}
+        ]}]}
+
+    test = get_data_temp()
+    data = get_data_wordcloud()
+    js_data= json.dumps(data)
+
+
+    js_data2= json.dumps(data_foamtree)
+
+    return render(request, 'results.html', {'dict_wordcloud': js_data, 'dict_foamtree': js_data2})

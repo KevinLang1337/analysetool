@@ -2,12 +2,16 @@ from nltk.tokenize import word_tokenize
 
 data_wordcloud = {}
 data_temp = dict()
+data_foamtree = {}
 
-def data_to_json():
-    return 0
+
+def get_data_foamtree():
+    return data_foamtree
+
 
 def get_data_temp():
     return data_temp
+
 
 def get_data_wordcloud():
     return data_wordcloud
@@ -37,8 +41,9 @@ def process_pdf(amount, date_from, date_until):
 
     number_files = len(files_in_dir)  # amount of files in the directory
 
-    pb = ProgressBar(total=100, prefix='Seiten zu ', suffix=' extrahiert', decimals=0, length=50, fill='|', zfill='-')
-    
+    pb = ProgressBar(total=100, prefix='Seiten zu ', suffix=' extrahiert',
+                     decimals=0, length=50, fill='|', zfill='-')
+
     # time.sleep(5)
 
     print("Analyse von ", number_files, " Dokument/en wird gestartet...")
@@ -50,7 +55,8 @@ def process_pdf(amount, date_from, date_until):
     file_counter = 1
     # --- EXTRACT TEXT FROM DOCUMENTS ---
     for file in files_in_dir:
-        print("#--- Dokument ", file_counter, " ---#")
+        print("#--- Dokument ", file_counter, ": ", file, " ---#")
+        
         extracted_text = ''
 
         fp = open(dir+file, 'rb')
@@ -76,7 +82,7 @@ def process_pdf(amount, date_from, date_until):
             pb.print_progress_bar(100/number_of_pages*page_counter)
             page_counter += 1
 
-        
+
         text_without_numbers = removeNumbers(extracted_text)
         text_without_stopwords = removeStopwords(text_without_numbers)
         lemmatized_tokens = lemmatizeTokens(text_without_stopwords)
@@ -90,21 +96,17 @@ def process_pdf(amount, date_from, date_until):
     dateTimeObjEnd = datetime.now()
     analyse_dauer = dateTimeObjEnd - dateTimeObj
 
-    useLDA(list_of_tokens, amount)
+    useLDA(list_of_tokens, amount, files_in_dir)
     print("Analyse beendet")
     print("Analysedauer: ", analyse_dauer)
 
 # --- DELETE NUMBERS FROM EXTRACTED TEXT -----
-
-
 def removeNumbers(lemmatized_text):
     temp_text = ''.join(c for c in lemmatized_text if not c.isdigit())
     print("Zahlen wurden entfernt")
     return temp_text
 
 # --- DELETE STOPWORDS FROM EXTRACTED TEXT ---
-
-
 def removeStopwords(lemmatized_text):
     import nltk
     from nltk.corpus import stopwords
@@ -114,7 +116,7 @@ def removeStopwords(lemmatized_text):
 
     stop_words = set(stopwords.words('german'))  # model for german stopwords
     stopword_extension = ['(', ')', '.', ':', ',', ';', '!', '?', '´', '"', '“', '„', '»', '«',
-                          '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor']
+                          '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor', 'sowie', 'müssen', 'aber']
     stop_words.update(stopword_extension)  # expands the list of stopwords
 
     word_tokens = word_tokenize(lemmatized_text)
@@ -130,8 +132,6 @@ def removeStopwords(lemmatized_text):
     return filtered_text
 
 # --- USE LEMMATIZATION ON EXTRACTED TEXT ----
-
-
 def lemmatizeTokens(list_with_tokens):
     import spacy
     from collections import Counter
@@ -149,25 +149,15 @@ def lemmatizeTokens(list_with_tokens):
     return word_tokens
 
 # --- LATENT DIRICHLET ALLOCATION ---
+def useLDA(list_of_token, amount_topics, files_in_directory):
 
-
-def useLDA(list_of_token, amount_topics):
-
-    # https://rstudio-pubs-static.s3.amazonaws.com/79360_850b2a69980c4488b1db95987a24867a.html
-    # https://towardsdatascience.com/topic-modelling-in-python-with-nltk-and-gensim-4ef03213cd21
-    # pyLDAvis zur Interpretation?
-    # TODO: Stopwords, Stemming usw. für jedes Dokument einzeln machen. Dann die Liste mit Token einer anderen Liste hinzufügen
-    # from gensim import corpora, models
-
-    # dictionary = corpora.Dictionary(filtered_text)
-    # corpus = [dictionary.doc2bow(lemmatized_text) for lemmatized_text in filtered_text]
-    # print(corpus[0])
     import gensim
     from gensim import corpora, models
     dictionary = corpora.Dictionary(list_of_token)
     corpus = [dictionary.doc2bow(word) for word in list_of_token]
 
-    default_amount_topics = 3
+    default_amount_topics = 5
+    minimum_probability = 0.34
 
     # IF NO AMOUNT IS PROVIDED
     if amount_topics == "":
@@ -179,43 +169,53 @@ def useLDA(list_of_token, amount_topics):
     if amount_topics == 0:
         print("keine Anzahl angegeben")
         ldamodel = gensim.models.ldamodel.LdaModel(
-            corpus, num_topics=default_amount_topics, id2word=dictionary, random_state=100,
-                                           update_every=1,
-                                           chunksize=10,
-                                           passes=10,
-                                           alpha='symmetric',
-                                           iterations=100,
-                                           per_word_topics=True)
+            corpus, num_topics=default_amount_topics, id2word=dictionary,
+            passes=15, minimum_probability=minimum_probability)
 
     elif amount_topics > 0:
         print("Anzahl ", amount_topics, " angegeben!")
         ldamodel = gensim.models.ldamodel.LdaModel(
-            corpus, num_topics=amount_topics, id2word=dictionary, random_state=100,
-                                           update_every=1,
-                                           chunksize=10,
-                                           passes=10,
-                                           alpha='symmetric',
-                                           iterations=100,
-                                           per_word_topics=True)
+            corpus, num_topics=amount_topics, id2word=dictionary,
+            passes=15, minimum_probability=minimum_probability)
 
     print("")
     print("#---- TOPICS ----#")
 
-    print(prepareDataForWordcloud(ldamodel, corpus, 50))
+    list_temp = []
+    if amount_topics > 0:
+        for x in range(0, amount_topics):
+            print("Topic ", x, " !")
 
+    elif amount_topics == 0:
+
+        for x in range(0, default_amount_topics):
+            group_temp = {}
+            for y in range(0, 2):
+                list_temp_2 = []
+
+            list_temp.append(group_temp)
     
-    for x in range(0, amount_topics):
-        data_temp.update({"groups":[
-        {"id": "1", "label": "Thema 1"}]})
+    data_foamtree.update({"groups": list_temp})
 
-    # prepareDataForWordcloud(ldamodel, corpus, 50)
+    print("########################")
+    for file in range(len(files_in_directory)):
+        print("Dokument", files_in_directory[file],": ", ldamodel[corpus[file]])
+    print("----------------------------")
 
-    return ldamodel.print_topics()
+    prepareDataForWordcloud(ldamodel, corpus, 50)
+    topics = ldamodel.show_topics(num_words = 4, formatted = False) #num_words = 4
+
+    for topic in topics:
+        print("###", topic)
+        print("--------------------")
+
+    return 0
+
 
 def prepareDataForWordcloud(ldamodel, corpus, amount_items):
-    
+
     dictionary_keys = ldamodel.id2word
-    
+
     temp_data = []
     for temp_corpus in corpus:
         for x in temp_corpus:
@@ -224,7 +224,7 @@ def prepareDataForWordcloud(ldamodel, corpus, amount_items):
             temp_value = temp_x[1]
             temp_tuple = (temp_key, temp_value)
             temp_data.append(temp_tuple)
-            #data.update(temp_pair)
+            # data.update(temp_pair)
 
     temp_data = sort_tuple(temp_data)
     if len(temp_data) >= amount_items:
@@ -234,19 +234,18 @@ def prepareDataForWordcloud(ldamodel, corpus, amount_items):
 
     return temp_data
 
-def sort_tuple(tup):  
-      
-    # getting length of list of tuples 
-    lst = len(tup)  
-    for i in range(0, lst):  
-          
-        for j in range(0, lst-i-1):  
-            if (tup[j][1] > tup[j + 1][1]):  
-                temp = tup[j]  
-                tup[j] = tup[j + 1]  
+
+def sort_tuple(tup):
+
+    # getting length of list of tuples
+    lst = len(tup)
+    for i in range(0, lst):
+
+        for j in range(0, lst-i-1):
+            if (tup[j][1] > tup[j + 1][1]):
+                temp = tup[j]
+                tup[j] = tup[j + 1]
                 tup[j + 1] = temp
 
     tup.reverse()
-    return tup  
-    
-    
+    return tup

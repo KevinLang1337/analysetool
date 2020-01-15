@@ -1,4 +1,4 @@
-from tool.DocumentReaderPDFMiner import process_pdf, get_data_wordcloud, get_data_temp
+from tool.DocumentReaderPDFMiner import process_pdf, get_data_wordcloud, get_data_foamtree
 from django.shortcuts import render
 from django.views import generic
 from collections import Counter
@@ -70,16 +70,27 @@ def index(request):
 def ergebnisse(request):
     import json
 
-    data_foamtree = {"groups": [
-        {"id": "1", "label": "Thema 1", "groups": [
-          {"id": "1.1", "label": "more", "groups": [
-              {"id":"1.1.1", "label":"Beispieldokument.pdf"}, {"id":"1.1.1", "label":"InteressantesDokument2019.pdf"}
+    
+    # temp_dict = {"label": "Thema 1"}
+    # temp_dict2 = {"label": "Thema 2"}
+    # temp_dict3 = {"label": "Thema 3"}
+    # temp_list = []
+    # temp_list.append(temp_dict)
+    # temp_list.append(temp_dict2)
+    # temp_list.append(temp_dict3)
 
-          ]},
-          {"id": "1.2", "label": "text"}
-        ]}]}
+    data_foamtree = get_data_foamtree() #{"groups": temp_list}
+    
+    # {"groups": [
+    #     {"label": "Thema 1", "groups": [
+    #       {label": "more", "groups": [
+    #           {"label":"Beispieldokument.pdf"}, {"label":"InteressantesDokument2019.pdf"}
 
-    test = get_data_temp()
+    #       ]},
+    #       {"id": "1.2", "label": "text"}
+    #     ]}]}
+
+    
     data = get_data_wordcloud()
     js_data= json.dumps(data)
 

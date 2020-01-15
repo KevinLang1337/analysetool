@@ -22,8 +22,10 @@ from datetime import datetime
 import nltk
 import logging
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from .forms import DocumentUploadForm
 
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
@@ -33,9 +35,16 @@ nltk.download('punkt', quiet=True)
 # Create your views here.
 
 
+
+
+@csrf_exempt
 def konfiguration(request):
-    if request.is_ajax():
+    if request.is_ajax() and request.method=='POST':
         logging.debug("Hallo Engel!")
+        form=DocumentUploadForm(request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(request, 'konfiguration.html')
 
     else: return render(request, 'konfiguration.html')
 

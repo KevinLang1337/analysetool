@@ -1,20 +1,25 @@
 
 $(document).ready(function() { 
- 
-    $('#upload_config_button').on("click",function(e) {
-        e.preventDefault(); 
-        const customBtn = document.getElementById("upload_config_button");
-        const realFileBtn=document.getElementById("source_upload_config");
-        const uploadTxt=document.getElementById("upload_text");
-
-        customBtn.addEventListener("click", function(){
-            realFileBtn.click();
-        })
-        realFileBtn.addEventListener("change", function(){
-            if(realFileBtn.value){
-                uploadTxt.placeholder=realFileBtn.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
+ var fileSelect=document.getElementById("file-select-input");
+    fileSelect.onchange=function(event){
+        event.preventDefault();
+        var files = fileSelect.files;
+        var formData = new FormData();
+        for(var i = 0; i < files.length; i++){
+            var file = files[i];
+            formData.append('myfiles[]', file, file.name);    
+        }
+        
+        $.ajax({
+            type: 'POST',
+            url: '../konfiguration/',
+            action:'post',
+            data:formData,
+            processData:false,
+            contentType:false,
+            success: function () {
+                alert("Upload abgeschlossen!");
             }
-        })
-        return false;
         });
+    }
 })

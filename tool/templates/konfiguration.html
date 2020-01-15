@@ -9,7 +9,7 @@
 
 {% block content %}
 <!-- LEFT COLUMN -->
-<form id="configForm" method="POST">
+
 <div class="col-md-3" style="flex-flow: column; display:flex;">
   <h1 class="title">Gespeicherte Konfigurationen</h1>
 
@@ -113,16 +113,20 @@
 
   <!-- FILEPATH TO SOURCES-->
   <h1 class="title">Dateipfad zu Quellen</h1>
+  <form id="upload-form"  method="POST" enctype="multipart/form-data">
   <div class="input-group">
     <input id="upload_text"type="text" class="form-control" placeholder="Search for...">
     <span class="input-group-btn">
-      <input type="file" id="source_upload_config" hidden="hidden"/>
-      <button type="button" id="upload_config_button" class="btn btn-primary" ><span class="glyphicon glyphicon-folder-open"></span></button>
+      <label class="btn btn-primary"><span class="glyphicon glyphicon-folder-open"></span>
+      <input style="display:none;" type="file" id="file-select-input" multiple="multiple"/>
+    </label>
     </span>
   </div>
+</form>
 
   <div style="flex-grow: 1;"></div>
 
+  <form id="configForm" method="POST">
   <h1 class="title">Einstellungen</h1>
   
     <!-- SETTINGS RIGHT SIDE-->

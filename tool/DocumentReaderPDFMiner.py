@@ -157,50 +157,59 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
     corpus = [dictionary.doc2bow(word) for word in list_of_token]
 
     default_amount_topics = 5
-    minimum_probability = 0.34
+    minimum_probability = 0.10
 
     # IF NO AMOUNT IS PROVIDED
     if amount_topics == "":
-        amount_topics = int(0)
+        amount_topics = default_amount_topics
+
     # IF AMOUNT IS PROVIDED
     elif amount_topics != "":
         amount_topics = int(amount_topics)
 
     if amount_topics == 0:
-        print("keine Anzahl angegeben")
-        ldamodel = gensim.models.ldamodel.LdaModel(
-            corpus, num_topics=default_amount_topics, id2word=dictionary,
-            passes=15, minimum_probability=minimum_probability)
-
-    elif amount_topics > 0:
-        print("Anzahl ", amount_topics, " angegeben!")
-        ldamodel = gensim.models.ldamodel.LdaModel(
-            corpus, num_topics=amount_topics, id2word=dictionary,
-            passes=15, minimum_probability=minimum_probability)
+        amount_topics = default_amount_topics
+        
+    ldamodel = gensim.models.ldamodel.LdaModel(
+        corpus, num_topics=amount_topics, id2word=dictionary,
+        passes=15, minimum_probability=minimum_probability)
 
     print("")
     print("#---- TOPICS ----#")
-
-    list_temp = []
-    if amount_topics > 0:
-        for x in range(0, amount_topics):
-            print("Topic ", x, " !")
-
-    elif amount_topics == 0:
-
-        for x in range(0, default_amount_topics):
-            group_temp = {}
-            for y in range(0, 2):
-                list_temp_2 = []
-
-            list_temp.append(group_temp)
     
-    data_foamtree.update({"groups": list_temp})
+    topic_dict = {k:[] for k in range(0, amount_topics)}    
 
-    print("########################")
-    for file in range(len(files_in_directory)):
-        print("Dokument", files_in_directory[file],": ", ldamodel[corpus[file]])
+    for docID in range(len(files_in_directory)):
+        topic_vector = ldamodel[corpus[docID]]
+        
+        for topicID, prob in topic_vector:
+            print("'", files_in_directory[docID], "' (", topicID, "/", prob, ")")
+            
+            temp_tuple = (docID, files_in_directory[docID], prob)
+            topic_dict[topicID].append(temp_tuple)
+
     print("----------------------------")
+
+
+    upper_group = []
+    for key in sorted(topic_dict.keys()) :
+        if len(topic_dict[key]) > 0:
+            print(key , " :: \n" , topic_dict[key])
+            # 0  ::  [(3, 'sample_deutsch.pdf', 0.99755144)]
+            topic_title = "Topic "
+            topic_title += str(key)
+            middle_group = []
+            upper_dict = {"label":topic_title, "groups":middle_group}
+            # {"label":Topic 1}
+                        
+            for docID, docTitle, prob in topic_dict[key]:
+                 
+                middle_dict = {"label": docTitle}
+                middle_group.append(middle_dict)
+            
+            upper_group.append(upper_dict)
+            data_foamtree.update({"groups":upper_group})
+
 
     prepareDataForWordcloud(ldamodel, corpus, 50)
     topics = ldamodel.show_topics(num_words = 4, formatted = False) #num_words = 4

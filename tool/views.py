@@ -47,6 +47,7 @@ def konfiguration(request):
             return render(request, 'konfiguration.html')
         elif not form.is_valid(): 
             logging.debug("Moin")
+            print(form.errors)
             return render(request, 'konfiguration.html')    
 
     else: return render(request, 'konfiguration.html')

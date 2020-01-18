@@ -41,10 +41,13 @@ nltk.download('punkt', quiet=True)
 def konfiguration(request):
     if request.is_ajax() and request.method=='POST':
         logging.debug("Hallo Engel!")
-        form=DocumentUploadForm(request.FILES)
+        form=DocumentUploadForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponse(request, 'konfiguration.html')
+            return render(request, 'konfiguration.html')
+        elif not form.is_valid(): 
+            logging.debug("Moin")
+            return render(request, 'konfiguration.html')    
 
     else: return render(request, 'konfiguration.html')
 

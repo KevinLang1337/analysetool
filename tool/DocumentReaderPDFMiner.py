@@ -56,7 +56,7 @@ def process_pdf(amount, date_from, date_until):
     # --- EXTRACT TEXT FROM DOCUMENTS ---
     for file in files_in_dir:
         print("#--- Dokument ", file_counter, ": ", file, " ---#")
-        
+
         extracted_text = ''
 
         fp = open(dir+file, 'rb')
@@ -82,7 +82,6 @@ def process_pdf(amount, date_from, date_until):
             pb.print_progress_bar(100/number_of_pages*page_counter)
             page_counter += 1
 
-
         text_without_numbers = removeNumbers(extracted_text)
         text_without_stopwords = removeStopwords(text_without_numbers)
         lemmatized_tokens = lemmatizeTokens(text_without_stopwords)
@@ -101,12 +100,16 @@ def process_pdf(amount, date_from, date_until):
     print("Analysedauer: ", analyse_dauer)
 
 # --- DELETE NUMBERS FROM EXTRACTED TEXT -----
+
+
 def removeNumbers(lemmatized_text):
     temp_text = ''.join(c for c in lemmatized_text if not c.isdigit())
     print("Zahlen wurden entfernt")
     return temp_text
 
 # --- DELETE STOPWORDS FROM EXTRACTED TEXT ---
+
+
 def removeStopwords(lemmatized_text):
     import nltk
     from nltk.corpus import stopwords
@@ -132,6 +135,8 @@ def removeStopwords(lemmatized_text):
     return filtered_text
 
 # --- USE LEMMATIZATION ON EXTRACTED TEXT ----
+
+
 def lemmatizeTokens(list_with_tokens):
     import spacy
     from collections import Counter
@@ -149,6 +154,8 @@ def lemmatizeTokens(list_with_tokens):
     return word_tokens
 
 # --- LATENT DIRICHLET ALLOCATION ---
+
+
 def useLDA(list_of_token, amount_topics, files_in_directory):
 
     import gensim
@@ -167,58 +174,69 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
     elif amount_topics != "":
         amount_topics = int(amount_topics)
 
+    # IF AMOUNT IS PROVIDED BUT 0
     if amount_topics == 0:
         amount_topics = default_amount_topics
-        
+
+    # Main LDAModel
     ldamodel = gensim.models.ldamodel.LdaModel(
-        corpus, num_topics=amount_topics, id2word=dictionary,
+        corpus=corpus, num_topics=amount_topics, id2word=dictionary,
         passes=15, minimum_probability=minimum_probability)
 
     print("")
     print("#---- TOPICS ----#")
-    
-    topic_dict = {k:[] for k in range(0, amount_topics)}    
 
-    for docID in range(len(files_in_directory)):
-        topic_vector = ldamodel[corpus[docID]]
-        
-        for topicID, prob in topic_vector:
-            print("'", files_in_directory[docID], "' (", topicID, "/", prob, ")")
-            
-            temp_tuple = (docID, files_in_directory[docID], prob)
-            topic_dict[topicID].append(temp_tuple)
+    prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus)
+    #prepareDataForWordcloud(ldamodel, corpus, 50)
 
-    print("----------------------------")
-
-
-    upper_group = []
-    for key in sorted(topic_dict.keys()) :
-        if len(topic_dict[key]) > 0:
-            print(key , " :: \n" , topic_dict[key])
-            # 0  ::  [(3, 'sample_deutsch.pdf', 0.99755144)]
-            topic_title = "Topic "
-            topic_title += str(key)
-            middle_group = []
-            upper_dict = {"label":topic_title, "groups":middle_group}
-            # {"label":Topic 1}
-                        
-            for docID, docTitle, prob in topic_dict[key]:
-                 
-                middle_dict = {"label": docTitle}
-                middle_group.append(middle_dict)
-            
-            upper_group.append(upper_dict)
-            data_foamtree.update({"groups":upper_group})
-
-
-    prepareDataForWordcloud(ldamodel, corpus, 50)
-    topics = ldamodel.show_topics(num_words = 4, formatted = False) #num_words = 4
-
+    topics = ldamodel.show_topics(
+        num_words=4, formatted=False)  # num_words = 4
     for topic in topics:
         print("###", topic)
         print("--------------------")
 
     return 0
+
+
+def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus):
+    import gensim
+    from gensim import corpora, models
+
+    # Create dictionary out of topics
+    topic_dict = {k: [] for k in range(0, amount_topics)}
+    for docID in range(len(files_in_directory)):
+        topic_vector = ldamodel[corpus[docID]]
+
+        for topicID, prob in topic_vector:
+            print("'", files_in_directory[docID],
+                  "' (", topicID, "/", prob, ")")
+
+            temp_tuple = (docID, files_in_directory[docID], prob)
+            topic_dict[topicID].append(temp_tuple)
+
+        
+    print("----------------------------")
+
+
+
+    upper_group = []
+    for key in sorted(topic_dict.keys()):
+        if len(topic_dict[key]) > 0:
+            # 0  ::  [(3, 'sample_deutsch.pdf', 0.99755144)]
+            topic_title = "Topic "
+            topic_title += str(key)
+            middle_group = []
+            upper_dict = {"label": topic_title, "groups": middle_group}
+            # {"label":Topic 1}
+
+            for docID, docTitle, prob in topic_dict[key]:
+
+                middle_dict = {"label": docTitle}
+                middle_group.append(middle_dict)
+
+            upper_group.append(upper_dict)
+            data_foamtree.update({"groups": upper_group})
+    print("")
 
 
 def prepareDataForWordcloud(ldamodel, corpus, amount_items):

@@ -8,7 +8,10 @@ $(document).ready(function() {
                var file = files[i];
                formData.append('myfiles[]', file, file.name);    
            }
-    
+           for (var [key, value] of formData.entries()) { 
+            console.log(key, value);
+          }
+          
            
            
            $.ajax({

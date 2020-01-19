@@ -41,10 +41,14 @@ nltk.download('punkt', quiet=True)
 def konfiguration(request):
     if request.is_ajax() and request.method=='POST':
         logging.debug("Hallo Engel!")
-        form=DocumentUploadForm(request.POST, request.FILES)
+
+        form = DocumentUploadForm(request.POST, request.FILES)
+
         if form.is_valid():
+            logging.debug("Ich habs geschafft :D")
             form.save()
             return render(request, 'konfiguration.html')
+        
         elif not form.is_valid(): 
             logging.debug("Moin")
             print(form.errors)
@@ -62,6 +66,7 @@ def webcrawler(request):
         date_until = request.POST.get('date_until')
         process_pdf(amount, date_from, date_until)
         return render(request, 'webcrawler.html')
+
     else:
         return render(request, 'webcrawler.html')
 

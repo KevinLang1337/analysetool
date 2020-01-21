@@ -13,13 +13,12 @@ from pdfminer.layout import LAParams, LTTextBox, LTTextLine
 from os import listdir
 from os.path import isfile, join
 
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 from datetime import datetime
 
-
-import nltk
 import logging
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -34,37 +33,35 @@ nltk.download('punkt', quiet=True)
 
 # Create your views here.
 
-
-
-
 @csrf_exempt
 def konfiguration(request):
-    if request.is_ajax() and request.method=='POST':
-        logging.debug("Hallo Engel!")
+    
+    
+    form = DocumentUploadForm(request.POST, request.FILES)
+    
+    if form.is_valid():
 
-        form = DocumentUploadForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            logging.debug("Ich habs geschafft :D")
-            form.save()
-            return render(request, 'konfiguration.html')
+        document = form.save(commit=False)
         
-        elif not form.is_valid(): 
-            logging.debug("Moin")
-            print(form.errors)
-            return render(request, 'konfiguration.html')    
+        document.title = document.file.name
+        document.save()
+        data = {'is_valid': True, 'name': document.file.name, 'url': document.file.url}
+    else:
+        data = {'is_valid': False}
 
-    else: return render(request, 'konfiguration.html')
+    return render(request, 'konfiguration.html', {'data':data})
 
 
 @csrf_exempt
 def webcrawler(request):
+
     if request.is_ajax() and request.POST.get('action') == 'post':
         logging.debug("Hallo Keks!")
         amount = request.POST.get('amount')
         date_from = request.POST.get('date_from')
         date_until = request.POST.get('date_until')
         process_pdf(amount, date_from, date_until)
+
         return render(request, 'webcrawler.html')
 
     else:
@@ -78,7 +75,6 @@ def index(request):
 
 def ergebnisse(request):
     import json
-
     
     # temp_dict = {"label": "Thema 1"}
     # temp_dict2 = {"label": "Thema 2"}
@@ -102,8 +98,6 @@ def ergebnisse(request):
     
     data = get_data_wordcloud()
     js_data= json.dumps(data)
-
-
     js_data2= json.dumps(data_foamtree)
 
     return render(request, 'results.html', {'dict_wordcloud': js_data, 'dict_foamtree': js_data2})

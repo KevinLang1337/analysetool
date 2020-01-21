@@ -4,12 +4,13 @@ $(document).ready(function() {
            e.preventDefault();
            var files = fileSelect.files;
            var formData = new FormData();
+           
            for(var i = 0; i < files.length; i++){
                var file = files[i];
-               formData.append('myfiles[]', file, file.name);    
+               formData.append('newfiles[]', file, file.name);    
            }
            for (var [key, value] of formData.entries()) { 
-            console.log(key, value);
+            console.log("Key: ", key, "Value: ", value);
           }
           
            

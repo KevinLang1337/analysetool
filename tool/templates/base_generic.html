@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 {% load static %}
-
 <html lang="en">
-
 <head>
-    {% block title %}<title>Local Library</title>{% endblock %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
         integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-
     <link rel="stylesheet" href="{% static 'css/bootstrap_extensions.css' %}">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!-- GLYPHICON LIBRARY -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- FONTAWESOME LIBRARY -->
-    <!--  jQuery -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
     
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <!--  JQUERY -->
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.ui.widget.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.iframe-transport.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.fileupload.js' %}"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.js"></script>
+
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 
     <!-- Bootstrap Date-Picker Plugin -->
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+
+    <!-- FONTAWESOME LIBRARY -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <!-- CUSTOM JAVASCRIPTS--> 
     <script type="text/javascript" src="{% static 'js/datepicker.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/isNumberKey.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/startAnalysis.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/helpfunction.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/upload_onchange.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/upload_sources.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/basic-upload.js' %}"></script>
 
     <!-- Wordcloud Plugin -->
     <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
@@ -42,7 +49,6 @@
 </head>
 
 <body>
-
     <main role="main" style="height: 100%;">
         <div class="container-fluid" style="height:100%; padding:0; margin:0;">
             <header style="height: 7vh;">

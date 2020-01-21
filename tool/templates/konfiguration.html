@@ -1,14 +1,13 @@
 {% extends "base_generic.html" %}
 {% block title %}<title>Analysetool</title>{% endblock %}
-
-
-
 {% block breadcrumb %}
 <li class="breadcrumb-item active" aria-current="page">Konfiguration</li>
 {% endblock %}
-
 {% block content %}
-<!-- LEFT COLUMN -->
+
+<!-- ################### -->
+<!-- ### LEFT COLUMN ### -->
+<!-- ################### -->
 
 <div class="col-md-3" style="flex-flow: column; display:flex;">
   <h1 class="title">Gespeicherte Konfigurationen</h1>
@@ -21,6 +20,7 @@
     <li class="list-group-item">Porta ac consectetur ac</li>
     <li class="list-group-item">Vestibulum at eros</li>
   </ul>
+
   <!-- BUTTONS LEFT SIDE-->
   <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
       class="glyphicon glyphicon-file gly-2x"></span><br>Auswahl öffnen</button>
@@ -28,13 +28,14 @@
       class="glyphicon glyphicon-minus gly-2x"></span><br>Auswahl löschen</button>
 </div>
 
-<!-- MIDDLE COLUMN -->
+<!-- ################### -->
+<!-- ### MIDDLE COLUMN ### -->
+<!-- ################### -->
 <div class="col-md-6" style="flex-flow: column; display:flex; margin: 0;">
   <h1 class="title" style="text-align:left;">Zu durchsuchende Webseiten</h1>
   <div class="row" style="height: 100%;">
 
     <div class="col-12 with_scrollbar" style="flex-flow: column; display: flex; margin: 0%;">
-
 
       <!-- TABLE MIDDLE -->
       <table class="table">
@@ -67,18 +68,20 @@
             <td>01.11.2019</td>
             <td>PDF</td>
           </tr>
-          
         </tbody>
       </table>
     </div>
-
   </div>
 </div>
 
-<!-- RIGHT COLUMN -->
+
+<!-- ################### -->
+<!-- ### RIGHT COLUMN ### -->
+<!-- ################### -->
 <div class="col-md-3" style="flex-flow: column; display:flex;">
 
   <h1 class="title">Informationen</h1>
+
   <div class="form-group row">
 
     <!-- INFORMATION RIGHT SIDE-->
@@ -101,9 +104,10 @@
   <div style="flex-grow: 1;"></div>
 
   <!-- SAVINGLOCATION RESULTS-->
-  
-    {% csrf_token %}
+
+  {% csrf_token %}
   <h1 class="title">Speicherort Ergebnisse</h1>
+
   <div class="input-group">
     <input type="text" class="form-control" placeholder="Search for...">
     <span class="input-group-btn">
@@ -111,24 +115,42 @@
     </span>
   </div>
 
+<div style="flex-grow: 1;"></div>
+
   <!-- FILEPATH TO SOURCES-->
   <h1 class="title">Dateipfad zu Quellen</h1>
-  <form id="upload-form"  method="POST" enctype="multipart/form-data">
-  <div class="input-group">
-    <input id="upload_text"type="text" class="form-control" placeholder="Search for...">
-    <span class="input-group-btn">
-      <label class="btn btn-primary"><span class="glyphicon glyphicon-folder-open"></span>
-      <input style="display:none;" type="file" id="file-select-input" multiple="multiple" />
-    </label>
-    </span>
+
+  <!-- BUTTON TO TRIGGER FILEUPLOAD -->
+  <button type="button" class="btn btn-primary js-upload-photos">
+    <span class="glyphicon glyphicon-cloud-upload"></span> Dateien hochladen
+  </button>
+
+  <!-- INPUT USED FOR FILEUPLOAD -->
+  <input id="fileupload" type="file" name="file" multiple style="display: none;"
+    data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+
+  <!-- PROGRESSBAR -->
+  <div class="modal fade" id="modal-progress" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Uploading...</h4>
+        </div>
+        <div class="modal-body">
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 0%;">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</form>
 
   <div style="flex-grow: 1;"></div>
 
   <form id="configForm" method="POST">
-  <h1 class="title">Einstellungen</h1>
-  
+
+    <h1 class="title">Einstellungen</h1>
+
     <!-- SETTINGS RIGHT SIDE-->
     <div class="form-group row">
       <label for="amount_topics" class="col-6 col-form-label" style="margin-bottom: 2%;">Anzahl Themen
@@ -158,28 +180,28 @@
       </div>
     </div>
 
-      <!-- BUTTON SAVE CONFIGURATION -->
-  <button type="button" class="btn btn-primary btn-lg text-center"
-  style="width: 100%; height: 15%; margin: auto; margin-top: 5%; display: block; white-space: normal;"><span
-    class="glyphicon glyphicon-floppy-disk gly-2x"></span><br>Konfiguration speichern</button>
+    <!-- BUTTON SAVE CONFIGURATION -->
+    <button type="button" class="btn btn-primary btn-lg text-center"
+      style="width: 100%; height: 15%; margin: auto; margin-top: 5%; display: block; white-space: normal;"><span
+        class="glyphicon glyphicon-floppy-disk gly-2x"></span><br>Konfiguration speichern</button>
 
-<!-- BUTTON START ANALYSIS -->
+    <!-- BUTTON START ANALYSIS -->
 
-<button onclick="buttonIndex=1;" id="startID" value="startButton" type="submit" class="btn btn-primary btn-lg text-center"
-  style="width: 100%; height: 15%; margin: auto; margin-top: 5%; display: block; white-space: normal;"><span
-    class="fa fa-line-chart fa-2x"></span><br>Analyse starten</button>
-  
+    <button onclick="buttonIndex=1;" id="startID" value="startButton" type="submit"
+      class="btn btn-primary btn-lg text-center"
+      style="width: 100%; height: 15%; margin: auto; margin-top: 5%; display: block; white-space: normal;"><span
+        class="fa fa-line-chart fa-2x"></span><br>Analyse starten</button>
 
-  <div id="spinnerStart" style="display: none;">
-    <h4>Analyse wird durchgeführt!</h4>
-    <img src="{{ MEDIA_URL }}/static/images/ajax-loader.gif" alt="loading"/>
-  </div>
+    <div id="spinnerStart" style="display: none;">
+      <h4>Analyse wird durchgeführt!</h4>
+      <img src="{{ MEDIA_URL }}/static/images/ajax-loader.gif" alt="loading" />
+    </div>
   </form>
-
   <div style="flex-grow: 1;"></div>
-
- 
-
-
 </div>
+
+
+
+
+
 {% endblock %}

@@ -187,7 +187,7 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
     print("#---- TOPICS ----#")
 
     prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus)
-    #prepareDataForWordcloud(ldamodel, corpus, 50)
+    prepareDataForWordcloud(ldamodel, corpus, 50)
 
     topics = ldamodel.show_topics(
         num_words=4, formatted=False)  # num_words = 4
@@ -254,10 +254,13 @@ def prepareDataForWordcloud(ldamodel, corpus, amount_items):
             # data.update(temp_pair)
 
     temp_data = sort_tuple(temp_data)
+    
     if len(temp_data) >= amount_items:
         data_wordcloud.update(dict(temp_data[0:amount_items]))
     elif len(temp_data) < amount_items:
         data_wordcloud.update(dict(temp_data[0:len(temp_data)]))
+
+    
 
     return temp_data
 

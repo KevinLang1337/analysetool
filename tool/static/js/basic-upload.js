@@ -20,12 +20,15 @@ $(function () {
     },
     done: function (e, data) {
       if (data.result.is_valid) {
-        $("#gallery tbody").prepend(
-          // "<tr><td><a href='" + data.result.url + "'>" + data.result.name + "</a></td></tr>"
-        )
+        $("#source_table tbody").prepend(
+          "<tr>" + "<td><input type='checkbox' class='form-check-input' scope='row' /></td>" +
+          "<td>"+ data.result.name + "</td>" + "<td>"+ 
+          "01.11.2019" + "</td>" +
+          "<td>"+ data.result.extension + "</td>" +"</tr>" 
+          
+        );
       }
     }
-
   });
   
   });

@@ -38,7 +38,7 @@
     <div class="col-12 with_scrollbar" style="flex-flow: column; display: flex; margin: 0%;">
 
       <!-- TABLE MIDDLE -->
-      <table class="table">
+      <table id = "source_table" class="table">
         <thead>
           <tr>
             <!-- TABLE HEADER -->
@@ -50,23 +50,13 @@
         </thead>
         <tbody>
           <!-- TABLE ITEMS -->
+          {% for document in documents %}
           <tr>
             <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
             <td>Wasserwirtschaft_2019</td>
             <td>01.11.2019</td>
             <td>PDF</td>
-          </tr>
-          <tr>
-            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
-            <td>Wasserwirtschaft_2019</td>
-            <td>01.11.2019</td>
-            <td>PDF</td>
-          </tr>
-          <tr>
-            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
-            <td>Wasserwirtschaft_2019</td>
-            <td>01.11.2019</td>
-            <td>PDF</td>
+            {% endfor %}
           </tr>
         </tbody>
       </table>

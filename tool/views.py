@@ -50,11 +50,12 @@ def konfiguration(request):
 
         print("Name: ", name, " | Typ: ", extension)
 
-        data = {'is_valid': True, 'name': document.file.name, 'url': document.file.url, 'extension': extension}
+        data = {'is_valid': True, 'name': name, 'extension': extension}
+        return JsonResponse(data)
     else:
         data = {'is_valid': False}
 
-    return render(request, 'konfiguration.html', {'data':data})
+        return render(request, 'konfiguration.html', {'data':data})
 
 
 @csrf_exempt

@@ -12,6 +12,7 @@ from pdfminer.layout import LAParams, LTTextBox, LTTextLine
 
 from os import listdir
 from os.path import isfile, join
+import os
 
 import nltk
 from nltk.corpus import stopwords
@@ -42,9 +43,12 @@ def konfiguration(request):
     if form.is_valid():
 
         document = form.save(commit=False)
-        
         document.title = document.file.name
         document.save()
+
+        name, extension = os.path.splitext(document.title)
+        print("Name: ", name, " | Typ: ", extension)
+
         data = {'is_valid': True, 'name': document.file.name, 'url': document.file.url}
     else:
         data = {'is_valid': False}

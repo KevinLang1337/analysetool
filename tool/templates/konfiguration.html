@@ -53,9 +53,9 @@
           {% for document in documents %}
           <tr>
             <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
-            <td>Wasserwirtschaft_2019</td>
+            <td>{{document.title}}</td>
             <td>01.11.2019</td>
-            <td>PDF</td>
+            <td>{{document.extension}}</td>
             {% endfor %}
           </tr>
         </tbody>

@@ -26,6 +26,7 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .forms import DocumentUploadForm
+from .models import Document
 
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
@@ -37,25 +38,29 @@ nltk.download('punkt', quiet=True)
 @csrf_exempt
 def konfiguration(request):
     
-    
-    form = DocumentUploadForm(request.POST, request.FILES)
-    
-    if form.is_valid():
+    if request.method=="POST":
+        form = DocumentUploadForm(request.POST, request.FILES)
+        
+        if form.is_valid():
 
-        document = form.save(commit=False)
-        document.title = document.file.name
-        name, extension = os.path.splitext(document.title)
-        document.extension = extension
-        document.save()
+            document = form.save(commit=False)
+            name, extension = os.path.splitext(document.file.name)
+            document.extension = extension
+            document.title = name
+            document.save()
 
-        print("Name: ", name, " | Typ: ", extension)
+            print("Name: ", name, " | Typ: ", extension)
 
-        data = {'is_valid': True, 'name': name, 'extension': extension}
-        return JsonResponse(data)
-    else:
-        data = {'is_valid': False}
+            data = {'is_valid': True, 'name': name, 'extension': extension}
+            return JsonResponse(data)
+        else:
+            data = {'is_valid': False}
 
-        return render(request, 'konfiguration.html', {'data':data})
+            return render(request, 'konfiguration.html', {'data':data})
+
+    elif request.method=="GET": 
+        document_list = Document.objects.all()
+        return render(request, 'konfiguration.html', {'documents':document_list})           
 
 
 @csrf_exempt

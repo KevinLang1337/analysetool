@@ -44,12 +44,13 @@ def konfiguration(request):
 
         document = form.save(commit=False)
         document.title = document.file.name
+        name, extension = os.path.splitext(document.title)
+        document.extension = extension
         document.save()
 
-        name, extension = os.path.splitext(document.title)
         print("Name: ", name, " | Typ: ", extension)
 
-        data = {'is_valid': True, 'name': document.file.name, 'url': document.file.url}
+        data = {'is_valid': True, 'name': document.file.name, 'url': document.file.url, 'extension': extension}
     else:
         data = {'is_valid': False}
 

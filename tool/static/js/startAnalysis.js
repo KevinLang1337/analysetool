@@ -24,15 +24,31 @@ function startAnalysis() {
             width: '25%',
         }
     });
+
+    var filenames = [],
+        $activeChk = $('#source_table input:checkbox:checked');
+        if ($activeChk.length === 0) {
+            alert("Keine Quellen ausgewählt!");
+            return;
+        }
+        $activeChk.each(function() {
+            filenames.push( $(this).closest('tr').children().eq(1).text() );
+        });
+        
+
+
     $.ajax({
         type: 'POST',
         url: '../webcrawler/',
         data:{
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
             action: 'post',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
             amount: $('#amount_topics').val(),
             date_from: $('#date_from').val(),
-            date_until: $('#date_until').val()
+            date_until: $('#date_until').val(),
+            filenames: filenames
         },
         success: function () {
             window.location.href = "../ergebnisse/";

@@ -27,6 +27,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .forms import DocumentUploadForm
 from .models import Document
+import json
 
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
@@ -71,7 +72,10 @@ def webcrawler(request):
         amount = request.POST.get('amount')
         date_from = request.POST.get('date_from')
         date_until = request.POST.get('date_until')
+        filenames = request.POST.getlist('filenames[]')
+        print(*filenames)
         process_pdf(amount, date_from, date_until)
+        
 
         return render(request, 'webcrawler.html')
 

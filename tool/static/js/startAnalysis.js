@@ -28,13 +28,27 @@ function startAnalysis() {
     var filenames = [],
         $activeChk = $('#source_table input:checkbox:checked');
         if ($activeChk.length === 0) {
-            alert("Keine Quellen ausgewählt!");
-            return;
+            $.blockUI({
+                message: $('#no_sources'),
+                css: {
+                    border: '5px solid #add8e6',
+                    
+                }
+                
+            });
+            $('.blockUI.blockMsg').center();
+            
+            $('#newTry').click(function() { 
+                $.unblockUI(); 
+            }); 
+            return false;
         }
         $activeChk.each(function() {
-            filenames.push( $(this).closest('tr').children().eq(1).text() );
+            var title = $(this).closest('tr').children().eq(1).text();
+            var extension = $(this).closest('tr').children().eq(3).text();
+            filenames.push( title+extension );
         });
-        
+       
 
 
     $.ajax({

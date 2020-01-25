@@ -21,11 +21,10 @@ $(function () {
     done: function (e, data) {
       if (data.result.is_valid) {
         $("#source_table tbody").prepend(
-          "<tr>" + "<td><input type='checkbox' class='form-check-input' scope='row' /></td>" +
+          "<tr>" + "<td><input type='checkbox' scope='row' /></td>" +
           "<td>"+ data.result.name + "</td>" + "<td>"+ 
-          "01.11.2019" + "</td>" +
+          "" + "</td>" +
           "<td>"+ data.result.extension + "</td>" +"</tr>" 
-          
         );
       }
     }

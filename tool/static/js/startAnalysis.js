@@ -26,7 +26,7 @@ function startAnalysis() {
     });
 
     var filenames = [],
-        $activeChk = $('#source_table input:checkbox:checked');
+        $activeChk = $('#source_table tbody input:checkbox:checked');
         if ($activeChk.length === 0) {
             $.blockUI({
                 message: $('#no_sources'),

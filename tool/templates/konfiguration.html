@@ -42,9 +42,9 @@
         <thead>
           <tr>
             <!-- TABLE HEADER -->
-            <th scope="col">Aktiv</th>
+            <th><input type="checkbox"  id="allActive"></th>
             <th scope="col">Bezeichnung</th>
-            <th scope="col">Datum</th>
+            <th scope="col"><a href="javascript: sortByDate(2);">Datum</a></th>
             <th scope="col">Format</th>
           </tr>
         </thead>
@@ -52,7 +52,7 @@
           <!-- TABLE ITEMS -->
           {% for document in documents %}
           <tr>
-            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
+            <td scope="row"><input type="checkbox"></td>
             <td>{{document.title}}</td>
             <td>01.11.2019</td>
             <td>{{document.extension}}</td>

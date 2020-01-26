@@ -46,13 +46,13 @@
             <th scope="col">Bezeichnung</th>
             <th scope="col"><a href="javascript: sortByDate(2);">Datum</a></th>
             <th scope="col">Format</th>
-            <th scope="col">Löschen</th>
+            <th scope="col"><a class="deleteAll" href="">Löschen</a></th>
           </tr>
         </thead>
         <tbody>
           <!-- TABLE ITEMS -->
           {% for document in documents %}
-          <tr data-did="{{document.id}}">
+          <tr class = "docIDClass" data-did="{{document.id}}">
             <td scope="row"><input type="checkbox"></td>
             <td>{{document.title}}</td>
             <td>01.11.2019</td>

@@ -39,10 +39,11 @@ nltk.download('punkt', quiet=True)
 @csrf_exempt
 def delete(request):
     if request.method=="POST" and request.is_ajax():
-        doc_id = (request.POST.get('doc_id'))
-        doc_id = int(doc_id)
-        document = Document.objects.get(id=doc_id)
-        document.delete()
+        doc_id = request.POST.getlist('doc_id[]')
+        for i in range(len(doc_id)):
+            delete_doc = int(doc_id[i])
+            document = Document.objects.get(id=delete_doc)
+            document.delete()
         return render(request, 'konfiguration.html')
     else: return render(request, 'konfiguration.html')
 

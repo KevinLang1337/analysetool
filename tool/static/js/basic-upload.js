@@ -21,13 +21,15 @@ $(function () {
     done: function (e, data) {
       if (data.result.is_valid) {
         $("#source_table tbody").prepend(
-          "<tr>" + "<td><input type='checkbox' scope='row' /></td>" +
+          "<tr data-did=" + data.result.id +">" + "<td><input type='checkbox' scope='row' /></td>" +
           "<td>"+ data.result.name + "</td>" + "<td>"+ 
           "" + "</td>" +
           "<td>"+ data.result.extension + "</td>"  +
           "<td><a class='delete' href=''><span class='glyphicon glyphicon-trash'></span></a> </span><td>" +
           "<td style='display:none'>" + data.result.id +"</td>" +
           "</tr>"
+
+          
         );
       }
     }

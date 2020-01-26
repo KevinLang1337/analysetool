@@ -37,11 +37,11 @@ nltk.download('punkt', quiet=True)
 # Create your views here.
 
 @csrf_exempt
-def delete(request, pk):
+def delete(request):
     if request.method=="POST" and request.is_ajax():
-        filename = request.POST.get('filename')
-        name, extension = os.path.splitext(filename)
-        document = Document.objects.get(title=name, extension=extension)
+        doc_id = (request.POST.get('doc_id'))
+        doc_id = int(doc_id)
+        document = Document.objects.get(id=doc_id)
         document.delete()
         return render(request, 'konfiguration.html')
     else: return render(request, 'konfiguration.html')
@@ -62,7 +62,7 @@ def konfiguration(request):
 
             print("Name: ", name, " | Typ: ", extension)
 
-            data = {'is_valid': True, 'name': name, 'extension': extension}
+            data = {'is_valid': True, 'name': name, 'extension': extension, 'id': document.id}
             return JsonResponse(data)
         else:
             data = {'is_valid': False}

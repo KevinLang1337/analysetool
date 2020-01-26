@@ -6,10 +6,9 @@
     $('table').on('click','tr a.delete',function(e){
        e.preventDefault();
       
-      var filename;
-      var title = $(this).closest('tr').children().eq(1).text();
-      var extension = $(this).closest('tr').children().eq(3).text();
-        filename=title+extension;
+     
+      var doc_id = $(this).closest("tr").attr("data-did");
+
         $(this).parents('tr').remove();
 
         $.ajax({
@@ -18,7 +17,7 @@
             data:{
                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
                 action: 'post',
-                filename:filename
+                doc_id:doc_id
             },
             success: function () {
                 

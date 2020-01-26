@@ -52,7 +52,7 @@
         <tbody>
           <!-- TABLE ITEMS -->
           {% for document in documents %}
-          <tr>
+          <tr data-did="{{document.id}}">
             <td scope="row"><input type="checkbox"></td>
             <td>{{document.title}}</td>
             <td>01.11.2019</td>

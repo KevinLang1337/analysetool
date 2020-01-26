@@ -26,6 +26,7 @@ $(function () {
           "" + "</td>" +
           "<td>"+ data.result.extension + "</td>"  +
           "<td><a class='delete' href=''><span class='glyphicon glyphicon-trash'></span></a> </span><td>" +
+          "<td style='display:none'>" + data.result.id +"</td>" +
           "</tr>"
         );
       }

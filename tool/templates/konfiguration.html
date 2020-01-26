@@ -46,6 +46,7 @@
             <th scope="col">Bezeichnung</th>
             <th scope="col"><a href="javascript: sortByDate(2);">Datum</a></th>
             <th scope="col">Format</th>
+            <th scope="col">Löschen</th>
           </tr>
         </thead>
         <tbody>
@@ -56,6 +57,7 @@
             <td>{{document.title}}</td>
             <td>01.11.2019</td>
             <td>{{document.extension}}</td>
+            <td><a class="delete" href=""><span class="glyphicon glyphicon-trash"></span></a> </td>
             {% endfor %}
           </tr>
         </tbody>

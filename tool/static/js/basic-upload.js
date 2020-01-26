@@ -24,7 +24,9 @@ $(function () {
           "<tr>" + "<td><input type='checkbox' scope='row' /></td>" +
           "<td>"+ data.result.name + "</td>" + "<td>"+ 
           "" + "</td>" +
-          "<td>"+ data.result.extension + "</td>" +"</tr>" 
+          "<td>"+ data.result.extension + "</td>"  +
+          "<td><a class='delete' href=''><span class='glyphicon glyphicon-trash'></span></a> </span><td>" +
+          "</tr>"
         );
       }
     }

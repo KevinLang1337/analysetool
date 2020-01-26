@@ -37,6 +37,16 @@ nltk.download('punkt', quiet=True)
 # Create your views here.
 
 @csrf_exempt
+def delete(request, pk):
+    if request.method=="POST" and request.is_ajax():
+        filename = request.POST.get('filename')
+        name, extension = os.path.splitext(filename)
+        document = Document.objects.get(title=name, extension=extension)
+        document.delete()
+        return render(request, 'konfiguration.html')
+    else: return render(request, 'konfiguration.html')
+
+@csrf_exempt
 def konfiguration(request):
     
     if request.method=="POST":

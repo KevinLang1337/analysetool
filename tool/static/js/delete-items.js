@@ -30,14 +30,41 @@
 $(function(){
     $('table').on('click','tr a.deleteAll',function(e){
         e.preventDefault();
-        var allIDs = [];
-        
         var sourceTable = $(this).parents('tr').parents('thead').parents('table')
-        $(".docIDClass").each(function() {
-            allIDs.push($(this).attr("data-did"))
-          })
+        var tableLength = $(sourceTable).prop('rows').length;
+
+        if(tableLength<=1){
+            return false;
+        }
+
+
+        $.blockUI({
+            message: $('#confirm_delete'),
+            css: {
+                border: '5px solid #add8e6',
+                
+            }
+            
+        });
+        $('.blockUI.blockMsg').center();
         
-        sourceTable.find('tbody').empty();
+        $('#cancel_delete_button').click(function() { 
+            $.unblockUI(); 
+            return false; 
+        }); 
+        $('#delete_all_button').click(function() { 
+            $.unblockUI();  
+        
+
+
+            var allIDs = [];
+        
+            
+            $(".docIDClass").each(function() {
+                allIDs.push($(this).attr("data-did"))
+            })
+        
+            sourceTable.find('tbody').empty();
         $.ajax({
             type: 'POST',
             url: '../delete/',
@@ -51,6 +78,7 @@ $(function(){
             }
         });  
     });
+}); 
 
     })
 

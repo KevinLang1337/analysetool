@@ -15,8 +15,9 @@ $(document).ready(function(){
   
 
 
-
+// Start analyzing 
 function startAnalysis() {
+    // Show dialogue while loading, block UI to prevent User interactions
     $.blockUI({
         message: $('#spinnerStart'),
         css: {
@@ -27,6 +28,7 @@ function startAnalysis() {
 
     var filenames = [],
         $activeChk = $('#source_table tbody input:checkbox:checked');
+        // If there are no sources selected, show dialogue
         if ($activeChk.length === 0) {
             $.blockUI({
                 message: $('#no_sources'),
@@ -37,12 +39,13 @@ function startAnalysis() {
                 
             });
             $('.blockUI.blockMsg').center();
-            
+
             $('#newTry').click(function() { 
                 $.unblockUI(); 
             }); 
             return false;
         }
+        // Collect sources in array
         $activeChk.each(function() {
             var title = $(this).closest('tr').children().eq(1).text();
             var extension = $(this).closest('tr').children().eq(3).text();
@@ -50,7 +53,7 @@ function startAnalysis() {
         });
        
 
-
+    // Send values to view
     $.ajax({
         type: 'POST',
         url: '../webcrawler/',

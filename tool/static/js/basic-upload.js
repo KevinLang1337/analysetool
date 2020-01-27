@@ -1,5 +1,5 @@
 $(function () {
-  $(".js-upload-photos").click(function () {
+  $(".js-upload-photos").click(function () { 
     $("#fileupload").click();
   });
 
@@ -18,6 +18,7 @@ $(function () {
       $(".progress-bar").css({"width": strProgress});
       $(".progress-bar").text(strProgress);
     },
+    // Add uploaded files to table
     done: function (e, data) {
       if (data.result.is_valid) {
         $("#source_table tbody").prepend(

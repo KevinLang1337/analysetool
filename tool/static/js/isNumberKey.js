@@ -1,3 +1,4 @@
+	// Only accept numbers as input
 	function isNumberKey(evt)
 			{
 				var charCode = (evt.which) ? evt.which : evt.keyCode;

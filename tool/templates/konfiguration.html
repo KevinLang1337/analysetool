@@ -24,7 +24,7 @@
   <!-- BUTTONS LEFT SIDE-->
   <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
       class="glyphicon glyphicon-file gly-2x"></span><br>Auswahl öffnen</button>
-  <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
+  <button type="button" onclick="deleteConfig();"class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
       class="glyphicon glyphicon-minus gly-2x"></span><br>Auswahl löschen</button>
 </div>
 
@@ -173,7 +173,7 @@
     </div>
 
     <!-- BUTTON SAVE CONFIGURATION -->
-    <button type="button" class="btn btn-primary btn-lg text-center"
+    <button type="button" onclick="saveOrOverwrite();" class="btn btn-primary btn-lg text-center"
       style="width: 100%; margin: auto; margin-top: 5%; display: block; white-space: normal;"><span
         class="glyphicon glyphicon-floppy-disk gly-2x"></span><br>Konfiguration speichern</button>
 
@@ -191,19 +191,39 @@
   </form>
 </div>
 
-
+<!-- DIALOGUE START ANALYSIS WITHOUT SOURCES -->
 <div id="no_sources" style="display:none; cursor: default">
   <p></p> 
   <p>Bitte wählen Sie die Quellen aus, die analysiert werden sollen. </p></p>
   <input type="button" id="newTry" value="Zurück" /> 
 </div> 
 
+<!-- DIALOGUE CONFIRM DELETING ALL SOURCES -->
 <div id="confirm_delete" style="display:none; cursor: default">
   <p></p> 
   <p>Sollen wirklich alle Quellen gelöscht werden?</p>
   <p>Zum Fortfahren klicken Sie bitte auf "Ja".</p> 
   <input type="button" id="delete_all_button" value="Ja" /> 
   <input type="button" id="cancel_delete_button" value="Abbruch" />
+</div> 
+
+<!-- DIALOGUE OVERWRITE -->
+<div id="dia_overwrite" style="display:none; cursor: default">
+  <p></p> 
+  <p>Es existiert bereits eine Konfiguration mit diesem Namen. Soll diese überschrieben werden?</p>
+  <input type="button" id="confirm_overwrite_button" value="Ja, überschreiben" /> 
+  <input type="button" id="cancel_overwrite_button" value="Abbruch" />
+</div> 
+
+<!-- DIALOGUE SAVE -->
+<div id="dia_save" style="display:none; cursor: default">
+  <p></p> 
+  <p>Bitte geben Sie den Namen der Konfiguration ein.</p>
+  <form id="save_new_config_form" method="POST">
+  <input type="text" class="form-control" id="name_new_config" value="">
+  <input type="button" id="save_config_button" value="Bestätigen" /> 
+  <input type="button" id="cancel_save_config_button" value="Abbruch" />
+</form>
 </div> 
 
 {% endblock %}

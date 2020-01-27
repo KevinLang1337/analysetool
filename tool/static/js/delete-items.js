@@ -1,7 +1,6 @@
 // Delete Configuration onclick
 function deleteConfig(){
     $('ul li.active').remove();
-    alert("HI!");
     $.ajax({
         type: 'GET',
         url: '../konfiguration/',

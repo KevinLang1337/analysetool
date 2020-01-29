@@ -1,6 +1,7 @@
-$(document).ready(function() { 
+$(document).ready(function(event) { 
     // Show help dialogue if user clicks on help icon
     $('#help_button').click(function() { 
+        
         $.blockUI({
             message: $('#help_dialogue'),
             overlayCSS:{cursor:"default"}
@@ -11,9 +12,10 @@ $(document).ready(function() {
         // Hide dialogue if user clicks "Ok"
         $('#ok').click(function() { 
             $.unblockUI(); 
+            event.preventDefault();
             return false; 
         }); 
- 
+        
     }); 
     // Place dialogue in the center of the screen
     $.fn.center = function () {

@@ -26,7 +26,9 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .forms import DocumentUploadForm
+from .forms import ConfigurationForm
 from .models import Document
+from .models import Configuration
 import json
 
 nltk.download('stopwords', quiet=True)
@@ -35,6 +37,39 @@ nltk.download('punkt', quiet=True)
 # https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
 
 # Create your views here.
+@csrf_exempt
+def saveconfig(request):
+    if request.method=="POST" and request.is_ajax():
+        form = ConfigurationForm(request.POST)
+        if form.is_valid():
+    
+            try:
+                overwriteConfig = Configuration.objects.get(title=request.POST.get('title'))
+                overwriteConfig.title = request.POST.get('title')
+                overwriteConfig.topics = request.POST.get('topics')
+                overwriteConfig.dateFrom = request.POST.get('dateFrom')
+                overwriteConfig.dateUntil = request.POST.get('dateUntil')
+                overwriteConfig.save()
+                data = {'is_valid': True, 'title': overwriteConfig.title, 'id': overwriteConfig.id}
+                
+            except Configuration.DoesNotExist:
+                overwriteConfig = None
+                config = form.save()
+                data = {'is_valid': True, 'title': config.title, 'id': config.id}
+            return JsonResponse(data)
+        else: return render(request, 'konfiguration.html')
+    else: return render(request, 'konfiguration.html')
+
+
+@csrf_exempt
+def deleteconfig(request):
+    if request.method=="POST" and request.is_ajax():
+        config_id = int(request.POST.get('cid'))
+        
+        del_config = Configuration.objects.get(id=config_id)
+        del_config.delete()
+        return render(request, 'konfiguration.html')
+    else: return render(request, 'konfiguration.html')
 
 @csrf_exempt
 def delete(request):
@@ -72,7 +107,8 @@ def konfiguration(request):
 
     elif request.method=="GET": 
         document_list = Document.objects.all()
-        return render(request, 'konfiguration.html', {'documents':document_list})           
+        config_list = Configuration.objects.all()
+        return render(request, 'konfiguration.html', {'documents':document_list, 'configs': config_list})           
 
 
 @csrf_exempt

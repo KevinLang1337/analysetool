@@ -1,16 +1,21 @@
 // Delete Configuration onclick
 function deleteConfig(){
-    $('ul li.active').remove();
+    var cid = $('ul li.active').attr("data-cid");
+    
+    if (typeof cid !== "undefined"){
+    
     $.ajax({
-        type: 'GET',
-        url: '../konfiguration/',
-        data:{
+        type: 'POST',
+        url: '../deleteconfig/',
+        data:{ cid: cid
         },
         //Reload window on success
         success: function () {
+        $('ul li.active').remove();
         window.location.reload();        
         }
 });
+}
 }
 
 // Delete Table Row and Model Entry of Document when trashcan is clicked

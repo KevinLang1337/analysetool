@@ -7,4 +7,6 @@ urlpatterns = [
     path('webcrawler/', views.webcrawler, name='webcrawler'),
     path('ergebnisse/', views.ergebnisse, name='ergebnisse'),
     path('delete/', views.delete, name='delete'),
+    path('saveconfig/', views.saveconfig, name='saveconfig'),
+    path('deleteconfig/', views.deleteconfig, name='deleteconfig'),
 ]

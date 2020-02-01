@@ -12,7 +12,7 @@ function saveOrOverwrite(event) {
     // Hide dialogue if user cancels saving
     $('#cancel_save_config_button').click(function () {
         $.unblockUI();
-        
+        event.preventDefault()
         return false;
     });
 
@@ -50,12 +50,12 @@ function saveOrOverwrite(event) {
                     configList.appendChild(entry);
                     }
                     $.unblockUI();
-                    
+                    event.preventDefault()
                     return false;;
                 }
             });
             
-            
+            event.preventDefault()
             return false;
         }
 
@@ -71,7 +71,7 @@ function saveOrOverwrite(event) {
             // Hide dialogue if User cancels overwriting
             $('#cancel_overwrite_button').click(function (event) {
                 $.unblockUI();
-                
+                event.preventDefault()
                 return false;
             });
 
@@ -91,15 +91,15 @@ function saveOrOverwrite(event) {
                     },
                     success: function () {
                         $.unblockUI();
-                        
+                        event.preventDefault()
                         return false;;
                     }
                 });
                 
-                
+                event.preventDefault()
                 return false;
             });
-            
+            event.preventDefault()
             return false;
         }
         

@@ -9,4 +9,6 @@ urlpatterns = [
     path('delete/', views.delete, name='delete'),
     path('saveconfig/', views.saveconfig, name='saveconfig'),
     path('deleteconfig/', views.deleteconfig, name='deleteconfig'),
+    path('selectconfig/', views.selectconfig, name='selectconfig'),
+    
 ]

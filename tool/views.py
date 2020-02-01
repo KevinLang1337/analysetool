@@ -71,6 +71,16 @@ def deleteconfig(request):
         return render(request, 'konfiguration.html')
     else: return render(request, 'konfiguration.html')
 
+
+def selectconfig(request):
+    if request.method=="GET" and request.is_ajax():
+        config_id = int(request.GET.get('configID'))
+        select_config = Configuration.objects.get(id=config_id)
+        
+        data = {'is_valid': True, 'topics': select_config.topics, 'dateFrom': select_config.dateFrom, 'dateUntil': select_config.dateUntil}
+        return JsonResponse(data)
+    else: return render(request, 'konfiguration.html')
+
 @csrf_exempt
 def delete(request):
     if request.method=="POST" and request.is_ajax():

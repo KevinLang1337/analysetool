@@ -32,7 +32,6 @@ input[type=number] {
 
 
 .with_scrollbar{
-    max-height:78%;
     overflow-y: scroll;
     overflow-x: scroll;
 }

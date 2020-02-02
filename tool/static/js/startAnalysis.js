@@ -26,7 +26,7 @@ function startAnalysis() {
         }
     });
 
-    var filenames = [],
+    var file_ids = [],
         $activeChk = $('#source_table tbody input:checkbox:checked');
         // If there are no sources selected, show dialogue
         if ($activeChk.length === 0) {
@@ -47,11 +47,10 @@ function startAnalysis() {
         }
         // Collect sources in array
         $activeChk.each(function() {
-            var title = $(this).closest('tr').children().eq(1).text();
-            var extension = $(this).closest('tr').children().eq(3).text();
-            filenames.push( title+extension );
+            var doc_ID = $(this).closest('tr').attr('data-did');
+            file_ids.push( doc_ID );
+            
         });
-       
 
     // Send values to view
     $.ajax({
@@ -65,7 +64,7 @@ function startAnalysis() {
             amount: $('#amount_topics').val(),
             date_from: $('#date_from').val(),
             date_until: $('#date_until').val(),
-            filenames: filenames
+            file_ids: file_ids
         },
         success: function () {
             window.location.href = "../ergebnisse/";

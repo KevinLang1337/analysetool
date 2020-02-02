@@ -16,7 +16,7 @@ def get_data_wordcloud():
     return data_wordcloud
 
 
-def process_pdf(amount, date_from, date_until):
+def process_pdf(amount, date_from, date_until, file_ids):
     print(amount)
     print(date_from)
     print(date_until)
@@ -33,10 +33,23 @@ def process_pdf(amount, date_from, date_until):
     from datetime import datetime
     import time
     from console_progressbar import ProgressBar
+    from .models import Document
 
-    dir = "tool/documents/"  # Directory to stored documents
-    files_in_dir = [f for f in listdir(dir) if isfile(
-        join(dir, f))]  # all files in the directory
+    # dir = "tool/documents/"  # Directory to stored documents
+    dir = "media/documents/"
+    # files_in_dir = [f for f in listdir(dir) if isfile(
+    #     join(dir, f))]  # all files in the directory
+
+    files_in_dir = []
+
+    print("File_IDs", file_ids)  
+
+    for id in file_ids:
+        id = int(id)
+        doc = Document.objects.get(id=id)
+        file_name = str(doc.file).replace("documents/", "")
+        files_in_dir.append(file_name)
+        print("Doc: ", doc.file)
 
     number_files = len(files_in_dir)  # amount of files in the directory
 
@@ -58,7 +71,7 @@ def process_pdf(amount, date_from, date_until):
 
         extracted_text = ''
 
-        fp = open(dir+file, 'rb')
+        fp = open("media/documents/"+file, 'rb')
         parser = PDFParser(fp)
         doc = PDFDocument(parser)
         parser.set_document(doc)

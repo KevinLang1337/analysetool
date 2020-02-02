@@ -16,7 +16,7 @@ def get_data_wordcloud():
     return data_wordcloud
 
 
-def process_pdf(amount, date_from, date_until):
+def process_pdf(amount, date_from, date_until, file_ids):
     print(amount)
     print(date_from)
     print(date_until)
@@ -33,10 +33,23 @@ def process_pdf(amount, date_from, date_until):
     from datetime import datetime
     import time
     from console_progressbar import ProgressBar
+    from .models import Document
 
-    dir = "tool/documents/"  # Directory to stored documents
-    files_in_dir = [f for f in listdir(dir) if isfile(
-        join(dir, f))]  # all files in the directory
+    # dir = "tool/documents/"  # Directory to stored documents
+    dir = "media/documents/"
+    # files_in_dir = [f for f in listdir(dir) if isfile(
+    #     join(dir, f))]  # all files in the directory
+
+    files_in_dir = []
+
+    print("File_IDs", file_ids)  
+
+    for id in file_ids:
+        id = int(id)
+        doc = Document.objects.get(id=id)
+        file_name = str(doc.file).replace("documents/", "")
+        files_in_dir.append(file_name)
+        print("Doc: ", doc.file)
 
     number_files = len(files_in_dir)  # amount of files in the directory
 
@@ -58,7 +71,7 @@ def process_pdf(amount, date_from, date_until):
 
         extracted_text = ''
 
-        fp = open(dir+file, 'rb')
+        fp = open("media/documents/"+file, 'rb')
         parser = PDFParser(fp)
         doc = PDFDocument(parser)
         parser.set_document(doc)
@@ -163,7 +176,7 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
     corpus = [dictionary.doc2bow(word) for word in list_of_token]
 
     default_amount_topics = 5
-    minimum_probability = 0.10
+    minimum_probability = 0.0
 
     # IF NO AMOUNT IS PROVIDED
     if amount_topics == "":
@@ -230,7 +243,7 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
     for key in sorted(topic_dict.keys()):
         if len(topic_dict[key]) > 0:
 
-            topic_title = "Topic " + str(key) + ": ["
+            topic_title = "Topic: ["
             topics = ldamodel.show_topic(key, 5)
             title_text = ""
 
@@ -261,7 +274,7 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
 
 
     
-    
+    # SUB-TOPIC
     for key in sub_dict.keys():
         topic_dict_sub = {k: [] for k in range(0, amount_topics)}
         middle_group = []
@@ -293,15 +306,16 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
 
                 ldamodel_sub = gensim.models.ldamodel.LdaModel(
                     corpus=list_of_corpora, num_topics=amount_topics, id2word=dictionary,
-                    passes=1, minimum_probability=0.10, callbacks=None) # TODO UNBEDINGT PASSES ÄNDERN
+                    passes=15, minimum_probability=0.0, callbacks=None)
 
             for file_temp in list_of_docs:
 
                 (docID, docTitle) = file_temp
                 
-                topic_vector = ldamodel_sub[corpus[docID]]
+                topic_vector_sub = ldamodel_sub[corpus[docID]]
 
-            for topicID, prob in topic_vector:
+            document_group = []
+            for topicID, prob in topic_vector_sub:
                 print("MainTopic", key, "'", files_in_directory[docID],
                     "' (", topicID, "/", prob, ")")
 
@@ -310,7 +324,7 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
 
                 print("### Element Topic ", key, " / Subtopic ", topicID, " ###: ", topic_dict_sub[topicID])
                 
-                topic_title = "Subtopic " + str(topicID) + ": ["
+                topic_title = "Subtopic: ["
                 topics = ldamodel_sub.show_topic(topicID, 5)
                 title_text = ""
 
@@ -321,8 +335,13 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
                 topic_title += title_text
                 topic_title += "]"
                 print(topic_title)
-                middle_dict = {"label":topic_title}
+                middle_dict = {"label":topic_title, "groups": document_group}
                 middle_group.append(middle_dict)
+
+                document_dict = {"label": files_in_directory[docID]}
+                document_group.append(document_dict)
+                
+
 
                 # topics = ldamodel_sub.show_topics(
                 # num_words=4, formatted=False)  # num_words = 4
@@ -422,7 +441,7 @@ def createLDASubModel(sub_corpus, amount_topics, dictionary, files_in_sub_corpus
     # perform LDA on sub_corpus
     ldamodel = gensim.models.ldamodel.LdaModel(
         corpus=sub_corpus, num_topics=amount_topics, id2word=dictionary,
-        passes=15, minimum_probability=0.10, callbacks=None)
+        passes=15, minimum_probability=0.0, callbacks=None)
 
     # Create dictionary out of topics
     sub_topic_dict = {k: [] for k in range(0, amount_topics)}

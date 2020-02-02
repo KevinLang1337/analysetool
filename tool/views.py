@@ -139,9 +139,9 @@ def webcrawler(request):
         amount = request.POST.get('amount')
         date_from = request.POST.get('date_from')
         date_until = request.POST.get('date_until')
-        filenames = request.POST.getlist('filenames[]')
-        print(*filenames)
-        process_pdf(amount, date_from, date_until)
+        file_ids = request.POST.getlist('file_ids[]')
+        
+        process_pdf(amount, date_from, date_until, file_ids)
         
 
         return render(request, 'webcrawler.html')

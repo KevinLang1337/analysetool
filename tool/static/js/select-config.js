@@ -18,7 +18,15 @@ $(document).on('click','.list-group-item', function() {
             configID: configID
         },
         success: function (data) {
-            
+            var id_list = data.id_list;
+            $Chk = $('#source_table tbody input:checkbox');
+            $Chk.each(function() {
+            $(this).prop('checked', false);
+            var doc_ID = parseInt($(this).closest('tr').attr('data-did'));
+            if (id_list.includes(doc_ID)){
+                $(this).prop('checked', true);
+            }
+            })
             document.getElementById('amount_topics').value = data.topics;
             document.getElementById('date_from').value = data.dateFrom;
             document.getElementById('date_until').value = data.dateUntil;

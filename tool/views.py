@@ -42,7 +42,7 @@ def saveconfig(request):
     if request.method=="POST" and request.is_ajax():
         form = ConfigurationForm(request.POST)
         if form.is_valid():
-    
+            doc_id = request.POST.getlist('documents[]')
             try:
                 overwriteConfig = Configuration.objects.get(title=request.POST.get('title'))
                 overwriteConfig.title = request.POST.get('title')
@@ -50,11 +50,19 @@ def saveconfig(request):
                 overwriteConfig.dateFrom = request.POST.get('dateFrom')
                 overwriteConfig.dateUntil = request.POST.get('dateUntil')
                 overwriteConfig.save()
+                overwriteConfig.documents.remove(*overwriteConfig.documents.all())
+                for i in range(len(doc_id)):
+                    save_doc = int(doc_id[i])
+                    overwriteConfig.documents.add(Document.objects.get(id=save_doc))
                 data = {'is_valid': True, 'title': overwriteConfig.title, 'id': overwriteConfig.id}
                 
             except Configuration.DoesNotExist:
                 overwriteConfig = None
                 config = form.save()
+                for i in range(len(doc_id)):
+                    save_doc = int(doc_id[i])
+                    config.documents.add(Document.objects.get(id=save_doc))
+                
                 data = {'is_valid': True, 'title': config.title, 'id': config.id}
             return JsonResponse(data)
         else: return render(request, 'konfiguration.html')
@@ -76,8 +84,10 @@ def selectconfig(request):
     if request.method=="GET" and request.is_ajax():
         config_id = int(request.GET.get('configID'))
         select_config = Configuration.objects.get(id=config_id)
-        
-        data = {'is_valid': True, 'topics': select_config.topics, 'dateFrom': select_config.dateFrom, 'dateUntil': select_config.dateUntil}
+        id_list = []
+        for document in select_config.documents.all():
+            id_list.append(document.id)
+        data = {'is_valid': True, 'id_list': id_list,'topics': select_config.topics, 'dateFrom': select_config.dateFrom, 'dateUntil': select_config.dateUntil}
         return JsonResponse(data)
     else: return render(request, 'konfiguration.html')
 

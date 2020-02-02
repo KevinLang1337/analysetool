@@ -17,6 +17,11 @@ class Configuration(models.Model):
     topics = models.CharField(max_length=100,blank=True)
     dateFrom = models.CharField(max_length=100, blank=True)
     dateUntil = models.CharField(max_length=100, blank=True)
+    documents = models.ManyToManyField(Document, blank=True)
+
+
+    
+
 
     def __str__(self):
         return self.title

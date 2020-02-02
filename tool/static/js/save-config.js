@@ -23,6 +23,14 @@ function saveOrOverwrite(event) {
         var config_name_exists = $('.list-group-item').filter(function () {
             return $(this).text() == newConfigName;
         });
+        var documents = [],
+        $activeChk = $('#source_table tbody input:checkbox:checked');
+        $activeChk.each(function() {
+            var doc_ID = $(this).closest('tr').attr('data-did');
+            documents.push( doc_ID );
+            
+        });
+        
         
 
         // TODO: Save configuration, if name does not exist
@@ -39,7 +47,8 @@ function saveOrOverwrite(event) {
                     topics: $('#amount_topics').val(),
                     dateFrom: $('#date_from').val(),
                     dateUntil: $('#date_until').val(),
-                    title: newConfigName
+                    title: newConfigName,
+                    documents: documents
                 },
                 success: function (data) {
                     if (data.is_valid){
@@ -87,7 +96,8 @@ function saveOrOverwrite(event) {
                         topics: $('#amount_topics').val(),
                         dateFrom: $('#date_from').val(),
                         dateUntil: $('#date_until').val(),
-                        title: newConfigName
+                        title: newConfigName,
+                        documents: documents
                     },
                     success: function () {
                         $.unblockUI();

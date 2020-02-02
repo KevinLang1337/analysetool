@@ -10,4 +10,4 @@ class DocumentUploadForm(forms.ModelForm):
 class ConfigurationForm(forms.ModelForm):
     class Meta:
         model = Configuration
-        fields = ('title','topics','dateFrom', 'dateUntil',)
+        fields = ('title','topics','dateFrom', 'dateUntil', 'documents')

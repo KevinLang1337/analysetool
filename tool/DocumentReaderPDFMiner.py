@@ -176,7 +176,7 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
     corpus = [dictionary.doc2bow(word) for word in list_of_token]
 
     default_amount_topics = 5
-    minimum_probability = 0.10
+    minimum_probability = 0.0
 
     # IF NO AMOUNT IS PROVIDED
     if amount_topics == "":
@@ -306,7 +306,7 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
 
                 ldamodel_sub = gensim.models.ldamodel.LdaModel(
                     corpus=list_of_corpora, num_topics=amount_topics, id2word=dictionary,
-                    passes=15, minimum_probability=0.10, callbacks=None)
+                    passes=15, minimum_probability=0.0, callbacks=None)
 
             for file_temp in list_of_docs:
 
@@ -441,7 +441,7 @@ def createLDASubModel(sub_corpus, amount_topics, dictionary, files_in_sub_corpus
     # perform LDA on sub_corpus
     ldamodel = gensim.models.ldamodel.LdaModel(
         corpus=sub_corpus, num_topics=amount_topics, id2word=dictionary,
-        passes=15, minimum_probability=0.10, callbacks=None)
+        passes=15, minimum_probability=0.0, callbacks=None)
 
     # Create dictionary out of topics
     sub_topic_dict = {k: [] for k in range(0, amount_topics)}

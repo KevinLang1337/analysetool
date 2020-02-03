@@ -65,7 +65,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb" style="font-size: large;">
                         <i id="help_button" class="fa fa-question-circle help-button pull-right"></i>
-                        <i id="logout_button" onclick="location.href='logout'" class="fa fa-sign-out logout-button pull-right"></i>
+                        <i id="logout_button" onclick="location.href='{% url 'logout' %}'" class="fa fa-sign-out logout-button pull-right"></i>
 
                         <li class="breadcrumb-item"><a href="{% url 'index' %}"><i
                                     style="margin-right: 0.5em; color:gray;"

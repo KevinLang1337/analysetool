@@ -42,7 +42,7 @@ def process_pdf(amount, date_from, date_until, file_ids):
 
     files_in_dir = []
 
-    print("File_IDs", file_ids)  
+    print("File_IDs", file_ids)
 
     for id in file_ids:
         id = int(id)
@@ -95,8 +95,10 @@ def process_pdf(amount, date_from, date_until, file_ids):
             page_counter += 1
 
         text_without_numbers = removeNumbers(extracted_text)
-        text_without_stopwords = removeStopwords(text_without_numbers)
-        lemmatized_tokens = lemmatizeTokens(text_without_stopwords)
+        detected_language = languageDetection(text_without_numbers)
+        print("Sprache erkannt: ", detected_language)
+        text_without_stopwords = removeStopwords(text_without_numbers, detected_language)
+        lemmatized_tokens = lemmatizeTokens(text_without_stopwords, detected_language)
         list_of_tokens.append(lemmatized_tokens)
         print("Anzahl Einträge: ", len(lemmatized_tokens))
         print("##-------------------------------------------##")
@@ -120,40 +122,76 @@ def removeNumbers(lemmatized_text):
     return temp_text
 
 # --- DELETE STOPWORDS FROM EXTRACTED TEXT ---
+def removeStopwords(text, language):
 
+    from spacy.lang.en import English
+    from spacy.lang.de import German
 
-def removeStopwords(lemmatized_text):
-    import nltk
-    from nltk.corpus import stopwords
+    # Load German tokenizer, tagger, parser, NER and word vectors
+    if language == 'de':
+        nlp = German()
+        doc = nlp(text)
 
-    nltk.download('stopwords', quiet=True)
-    nltk.download('punkt', quiet=True)
+        # Create list of word tokens
+        token_list = []
+        for token in doc:
+            token_list.append(token.text)
 
-    stop_words = set(stopwords.words('german'))  # model for german stopwords
-    stopword_extension = ['(', ')', '.', ':', ',', ';', '!', '?', '´', '"', '“', '„', '»', '«',
-                          '>', '<', '|', '–', '—', '_', '•', '...', '%', '!', '§', '!', '&', '/', '=', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\uf0b7', 'al', 'et', 'autor', 'sowie', 'müssen', 'aber']
-    stop_words.update(stopword_extension)  # expands the list of stopwords
+        from spacy.lang.de.stop_words import STOP_WORDS
+        # Create list of word tokens after removing stopwords
+        filtered_sentence = []
 
-    word_tokens = word_tokenize(lemmatized_text)
+        for word in token_list:
+            lexeme = nlp.vocab[word]
+            if lexeme.is_stop == False and \
+                lexeme.is_punct == False and \
+                lexeme.is_space == False and \
+                lexeme.is_bracket == False and \
+                lexeme.is_quote == False and \
+                lexeme.like_url == False and \
+                lexeme.like_email == False and \
+                len(word) > 3:
+                    filtered_sentence.append(word)
 
-    filtered_text = []
+        return filtered_sentence
 
-    # IF WORDS ARE NOT STOPWORD AND HAVE MORE CHARACTER THAN 3
-    for w in word_tokens:
-        if w not in stop_words and len(w) > 3:
-            filtered_text.append(w)
+    # Load English tokenizer, tagger, parser, NER and word vectors
+    elif language == 'en':
+        nlp = English()
+        doc = nlp(text)
 
-    print("Stoppwörter wurden entfernt")
-    return filtered_text
+        # Create list of word tokens
+        token_list = []
+        for token in doc:
+            token_list.append(token.text)
+
+        from spacy.lang.en.stop_words import STOP_WORDS
+        # Create list of word tokens after removing stopwords
+        filtered_sentence = []
+
+        for word in token_list:
+            lexeme = nlp.vocab[word]
+            if lexeme.is_stop == False and \
+                lexeme.is_punct == False and \
+                lexeme.is_space == False and \
+                lexeme.is_bracket == False and \
+                lexeme.is_quote == False and \
+                lexeme.like_url == False and \
+                lexeme.like_email == False and \
+                len(word) > 3:
+                    filtered_sentence.append(word)
+
+        return filtered_sentence    
 
 # --- USE LEMMATIZATION ON EXTRACTED TEXT ----
-
-
-def lemmatizeTokens(list_with_tokens):
+def lemmatizeTokens(list_with_tokens, language):
     import spacy
     from collections import Counter
 
-    nlp = spacy.load('de_core_news_sm')  # model for german texts
+    if language == 'de':
+        nlp = spacy.load('de_core_news_sm')  # model for german texts
+    elif language == 'en':
+        nlp = spacy.load('en_core_web_sm')  # model for english texts
 
     list_to_str = ' '.join(token for token in list_with_tokens)
 
@@ -265,15 +303,6 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
                 sub_tuple = (docID, docTitle, corpus[docID])
                 sub_dict[key].append(sub_tuple)
 
-
-
-
-
-
-
-
-
-    
     # SUB-TOPIC
     for key in sub_dict.keys():
         topic_dict_sub = {k: [] for k in range(0, amount_topics)}
@@ -311,19 +340,20 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
             for file_temp in list_of_docs:
 
                 (docID, docTitle) = file_temp
-                
+
                 topic_vector_sub = ldamodel_sub[corpus[docID]]
 
             document_group = []
             for topicID, prob in topic_vector_sub:
                 print("MainTopic", key, "'", files_in_directory[docID],
-                    "' (", topicID, "/", prob, ")")
+                      "' (", topicID, "/", prob, ")")
 
                 temp_tuple = (docID, files_in_directory[docID], prob)
                 topic_dict_sub[topicID].append(temp_tuple)
 
-                print("### Element Topic ", key, " / Subtopic ", topicID, " ###: ", topic_dict_sub[topicID])
-                
+                print("### Element Topic ", key, " / Subtopic ",
+                      topicID, " ###: ", topic_dict_sub[topicID])
+
                 topic_title = "Subtopic: ["
                 topics = ldamodel_sub.show_topic(topicID, 5)
                 title_text = ""
@@ -335,13 +365,11 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
                 topic_title += title_text
                 topic_title += "]"
                 print(topic_title)
-                middle_dict = {"label":topic_title, "groups": document_group}
+                middle_dict = {"label": topic_title, "groups": document_group}
                 middle_group.append(middle_dict)
 
                 document_dict = {"label": files_in_directory[docID]}
                 document_group.append(document_dict)
-                
-
 
                 # topics = ldamodel_sub.show_topics(
                 # num_words=4, formatted=False)  # num_words = 4
@@ -354,10 +382,9 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
 
         for upper_dict in upper_group:
 
-                if key == upper_dict['id']:
-                    upper_dict['groups'] = middle_group 
-        
-        
+            if key == upper_dict['id']:
+                upper_dict['groups'] = middle_group
+
         #     document_group = []
 
         #     middle_dict = {"id": key, "label": topic_title,
@@ -368,9 +395,8 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
         # for upper_dict in upper_group:
 
         #         if key == upper_dict['id']:
-        #             upper_dict['groups'] = middle_group    
+        #             upper_dict['groups'] = middle_group
 
-    
     # for key in sorted(topic_dict_sub.keys()):
     #     if len(topic_dict_sub[key]) > 0:
 
@@ -395,7 +421,6 @@ def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, 
     #         for docID, docTitle, prob in topic_dict[key]:
     #             sub_tuple = (docID, docTitle, corpus[docID])
     #             sub_dict[key].append(sub_tuple)
-
 
     # for key in sub_dict.keys():
 
@@ -529,3 +554,16 @@ def sort_tuple(tup):
 
     tup.reverse()
     return tup
+
+
+def languageDetection(text):
+    import spacy
+    from spacy_langdetect import LanguageDetector
+
+    nlp = spacy.load('de_core_news_sm')
+    nlp.add_pipe(LanguageDetector(), name='language_detector', last=True)
+    # text = 'This is an english text.'
+    doc = nlp(text)
+    # document level language detection. Think of it like average language of the document!
+    language = doc._.language['language']
+    return language

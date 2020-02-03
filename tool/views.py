@@ -1,5 +1,5 @@
 from tool.DocumentReaderPDFMiner import process_pdf, get_data_wordcloud, get_data_foamtree
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import generic
 from collections import Counter
 from nltk.stem.snowball import SnowballStemmer
@@ -30,6 +30,8 @@ from .forms import ConfigurationForm
 from .models import Document
 from .models import Configuration
 import json
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
@@ -37,6 +39,17 @@ nltk.download('punkt', quiet=True)
 # https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
 
 # Create your views here.
+
+def signup(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect("/")
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {"form":form})
+
 @csrf_exempt
 def saveconfig(request):
     if request.method=="POST" and request.is_ajax():

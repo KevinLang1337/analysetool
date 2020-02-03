@@ -56,53 +56,23 @@
     <!-- WORDCLOUD EXPORT PLUGIN -->
     <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-exports.min.js"></script>
 </head>
+{% load crispy_forms_tags %}
+ 
 
-<body>
-    {% if user.is_authenticated %}
-    <main role="main" style="height: 100%;">
-        <div class="container-fluid" style="height:100%; padding:0; margin:0;">
-            <header style="height: 7vh;">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb" style="font-size: large;">
-                        <i id="help_button" class="fa fa-question-circle help-button pull-right"></i>
-                        <i id="logout_button" onclick="location.href='logout'" class="fa fa-sign-out logout-button pull-right"></i>
-
-                        <li class="breadcrumb-item"><a href="{% url 'index' %}"><i
-                                    style="margin-right: 0.5em; color:gray;"
-                                    class="glyphicon glyphicon-home"></i>Hauptmenü</a>
-                                    
-                        {% block breadcrumb %}
-                        {% endblock %}
-
-                    </ol>
-                </nav>
-
-            </header>
-
-            <div class="row" style="height:91vh; padding:0; margin:0;">
-            
-                {% block content %}
-                {% endblock %}
-            {% else %}
-            <meta http-equiv="Refresh" content="0; url=/tool/login" />
-            {% endif %}
-            </div>
-
-        </div>
-    </main>
-</body>
-<div id="help_dialogue" style="display:none; cursor: default"> 
-    <h1>Hilfefunktion</h1>
-    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein Absatz, und hier ist er zu Ende.</p>
-    <p>Hier beginnt ein neuer Absatz, und hier ist er zu Ende.</p>
-    <input type="button" id="ok" value="OK!" /> 
-</div> 
-</html>
+ 
+ {% if user.is_authenticated %}
+ <meta http-equiv="Refresh" content="0; url=/" />
+ {% else %}
+ <div class="container-fluid" style="padding-left:10%; padding-right: 10%; padding-top:20%">
+ <h1 class="title">Bitte loggen Sie sich ein.</h1>
+ <form method="post" class="form-group">
+    {%csrf_token%}
+    {{form|crispy}}
+    <button type="submit" class= "btn btn-primary">Login</button>
+    <p></p>
+    <p>Falls Sie noch keinen Account haben, können Sie diesen <a href="/tool/signup">hier</a> erstellen.</p>
+    
+ </form>
+</div>
+ {% endif %}
+ 

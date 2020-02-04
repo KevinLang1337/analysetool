@@ -106,10 +106,10 @@ def process_pdf(amount, date_from, date_until, file_ids):
         file_counter += 1
 
     # --- PRINT DURATION OF ANALYSIS ---
+    useLDA(list_of_tokens, amount, files_in_dir)
     dateTimeObjEnd = datetime.now()
     analyse_dauer = dateTimeObjEnd - dateTimeObj
 
-    useLDA(list_of_tokens, amount, files_in_dir)
     print("Analyse beendet")
     print("Analysedauer: ", analyse_dauer)
 
@@ -204,17 +204,18 @@ def lemmatizeTokens(list_with_tokens, language):
     return word_tokens
 
 # --- LATENT DIRICHLET ALLOCATION ---
-
-
 def useLDA(list_of_token, amount_topics, files_in_directory):
-
     import gensim
     from gensim import corpora, models
+
+    # CREATE A DICTIONARY
     dictionary = corpora.Dictionary(list_of_token)
+    # CREATE A CORPUS
     corpus = [dictionary.doc2bow(word) for word in list_of_token]
 
+    # SETTINGS FOR LDA
     default_amount_topics = 5
-    minimum_probability = 0.0
+    minimum_probability = 0.1
 
     # IF NO AMOUNT IS PROVIDED
     if amount_topics == "":
@@ -228,230 +229,115 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
     if amount_topics == 0:
         amount_topics = default_amount_topics
 
-    # Main LDAModel
+    # Main model
     ldamodel = gensim.models.ldamodel.LdaModel(
         corpus=corpus, num_topics=amount_topics, id2word=dictionary,
-        passes=15, minimum_probability=minimum_probability, callbacks=None)
+        passes=1, minimum_probability=minimum_probability, callbacks=None)
 
-    print("")
-    print("#---- TOPICS ----#")
-
-    prepareDataForFoamtree(
-        amount_topics, files_in_directory, ldamodel, corpus, dictionary)
     prepareDataForWordcloud(ldamodel, corpus, 50)
 
-    topics = ldamodel.show_topics(
-        num_words=4, formatted=False)  # num_words = 4
-    for topic in topics:
-        print("### Topic", topic)
-        print("--------------------")
-
-    return 0
-
-
-def prepareDataForFoamtree(amount_topics, files_in_directory, ldamodel, corpus, dictionary):
-    import gensim
-    from gensim import corpora, models
-
-    # Create dictionary out of topics
     topic_dict = {k: [] for k in range(0, amount_topics)}
-
+    
+    print("#------#")
+    # SAVE DOCID AND DOCTITLE IN TOPIC_DICTIONARY
     for docID in range(len(files_in_directory)):
         topic_vector = ldamodel[corpus[docID]]
+        print("Doc ", docID, " (", files_in_directory[docID],")")
+        print("Vector: ", topic_vector)
+        print("---")
 
-        for topicID, prob in topic_vector:
-            print("'", files_in_directory[docID],
-                  "' (", topicID, "/", prob, ")")
+        for topicID, probability in topic_vector:
+            tuple_temp = (docID, files_in_directory[docID])
+            topic_dict[topicID].append(tuple_temp)
 
-            temp_tuple = (docID, files_in_directory[docID], prob)
-            topic_dict[topicID].append(temp_tuple)
-
-    # #---- TOPICS ----#
-    # ' Anforderungen Masterarbeit - Kopie.pdf ' ( 2 / 0.9968493 )
-    # ' Anforderungen Masterarbeit.pdf ' ( 2 / 0.9968493 )
-    # ' sample.pdf ' ( 3 / 0.993043 )
-    # ' sample_deutsch.pdf ' ( 1 / 0.99755144 )
-
-    print("----------------------------")
-
+    print(" # # # # # # # # # # # # # ")
+    # CREATE NEW CORPUS FROM SUBCORPORA
     upper_group = []
-
-    sub_dict = {k: [] for k in range(0, amount_topics)}
-
-    for key in sorted(topic_dict.keys()):
-        if len(topic_dict[key]) > 0:
+    for topicID in topic_dict:
+        
+        topic_dict_sub = {k: [] for k in range(0, amount_topics)}
+        
+        if len(topic_dict[topicID]) > 0:
+            print(" ")
+            print("#-------------#", len(topic_dict[topicID]))
+            print("### Maintopic ", topicID,": ", topic_dict[topicID])
+            
+            # CREATE LABEL FOR FOAMTREE
+            main_topic = ldamodel.show_topic(topicID, 5)
 
             topic_title = "Topic: ["
-            topics = ldamodel.show_topic(key, 5)
             title_text = ""
 
-            for item in topics:
+            for item in main_topic:
                 title_text += item[0]
                 title_text += ", "
             title_text = title_text[:-2]
 
             topic_title += title_text
             topic_title += "]"
-            middle_group = []
 
-            upper_dict = {"id": key, "label": topic_title,
+            middle_group = []
+            upper_dict = {"id": topicID
+            , "label": topic_title,
                           "groups": middle_group}
             upper_group.append(upper_dict)
-            # {"label":Topic 1}
 
-            for docID, docTitle, prob in topic_dict[key]:
-                sub_tuple = (docID, docTitle, corpus[docID])
-                sub_dict[key].append(sub_tuple)
-
-    # SUB-TOPIC
-    for key in sub_dict.keys():
-        topic_dict_sub = {k: [] for k in range(0, amount_topics)}
-        middle_group = []
-        print("Maintopic: ", key)
-
-        new_key = sub_dict[key]
-
-        if (len(new_key) > 0):
-
-            list_of_docs = []
-            list_of_corpora = []
             new_corpus = []
+            for tuple_doc in topic_dict[topicID]:
+                new_corpus.append(corpus[tuple_doc[0]])
 
-            for element in new_key:
+            print(" - - -")
+            # Sub model of this topic
+            ldamodel_sub = gensim.models.ldamodel.LdaModel(
+                corpus=new_corpus, num_topics=amount_topics, id2word=dictionary,
+                passes=1, minimum_probability=minimum_probability, callbacks=None)        
+            
+            for tuple_doc in topic_dict[topicID]:
+                docID = tuple_doc[0]
+                docTitle = tuple_doc[1]
+                print("---------------------------------------------")
+                print("DocID ", docID, " (", docTitle,")")
+                topic_vector_sub = ldamodel_sub[corpus[tuple_doc[0]]]
+                print("Vector_Sub: ", topic_vector_sub) 
 
-                docID = element[0]
-                docTitle = element[1]
-                corpus_sub = element[2]
+                for topicID, probability in topic_vector_sub:
+                    tuple_temp = (docID, docTitle)
+                    topic_dict_sub[topicID].append(tuple_temp)
 
-                tuple_doc = (docID, docTitle)
-                list_of_docs.append(tuple_doc)
-                list_of_corpora.append(corpus_sub)
-                new_corpus += corpus_sub
-                print("DocID: ", docID)
-                print("DocTitle: ", docTitle)
-                print("----------")
+                print("---------------------------------------------")
 
-            if(len(list_of_corpora) > 0):
+        for topicID_sub in topic_dict_sub:
+            
+            if len(topic_dict_sub[topicID_sub]) > 0:
+                print("Subtopic ", topicID_sub,": ", topic_dict_sub[topicID_sub])
 
-                ldamodel_sub = gensim.models.ldamodel.LdaModel(
-                    corpus=list_of_corpora, num_topics=amount_topics, id2word=dictionary,
-                    passes=15, minimum_probability=0.0, callbacks=None)
-
-            for file_temp in list_of_docs:
-
-                (docID, docTitle) = file_temp
-
-                topic_vector_sub = ldamodel_sub[corpus[docID]]
-
-            document_group = []
-            for topicID, prob in topic_vector_sub:
-                print("MainTopic", key, "'", files_in_directory[docID],
-                      "' (", topicID, "/", prob, ")")
-
-                temp_tuple = (docID, files_in_directory[docID], prob)
-                topic_dict_sub[topicID].append(temp_tuple)
-
-                print("### Element Topic ", key, " / Subtopic ",
-                      topicID, " ###: ", topic_dict_sub[topicID])
+                sub_topic = ldamodel_sub.show_topic(topicID_sub, 5)
 
                 topic_title = "Subtopic: ["
-                topics = ldamodel_sub.show_topic(topicID, 5)
                 title_text = ""
 
-                for item in topics:
+                for item in sub_topic:
                     title_text += item[0]
                     title_text += ", "
                 title_text = title_text[:-2]
+
                 topic_title += title_text
                 topic_title += "]"
-                print(topic_title)
-                middle_dict = {"label": topic_title, "groups": document_group}
+
+                document_group = []
+                middle_dict = {"id": topicID_sub
+                , "label": topic_title,
+                            "groups": document_group}
                 middle_group.append(middle_dict)
 
-                document_dict = {"label": files_in_directory[docID]}
-                document_group.append(document_dict)
-
-                # topics = ldamodel_sub.show_topics(
-                # num_words=4, formatted=False)  # num_words = 4
-                # for topic in topics:
-                #     print("### Subtopic", topic)
-                #     print("--------------------")
-
-        print(" # # # # # # # # # ")
-        print("")
-
-        for upper_dict in upper_group:
-
-            if key == upper_dict['id']:
-                upper_dict['groups'] = middle_group
-
-        #     document_group = []
-
-        #     middle_dict = {"id": key, "label": topic_title,
-        #                   "groups": document_group}
-        #     middle_group.append(middle_dict)
-        #     # {"label":Topic 1}
-
-        # for upper_dict in upper_group:
-
-        #         if key == upper_dict['id']:
-        #             upper_dict['groups'] = middle_group
-
-    # for key in sorted(topic_dict_sub.keys()):
-    #     if len(topic_dict_sub[key]) > 0:
-
-    #         topic_title = "Topic " + str(key) + ": ["
-    #         topics = ldamodel_sub.show_topic(key, 5)
-    #         title_text = ""
-
-    #         for item in topics:
-    #             title_text += item[0]
-    #             title_text += ", "
-    #         title_text = title_text[:-2]
-
-    #         topic_title += title_text
-    #         topic_title += "]"
-    #         middle_group = []
-
-    #         upper_dict = {"id": key, "label": topic_title,
-    #                       "groups": middle_group}
-    #         upper_group.append(upper_dict)
-    #         # {"label":Topic 1}
-
-    #         for docID, docTitle, prob in topic_dict[key]:
-    #             sub_tuple = (docID, docTitle, corpus[docID])
-    #             sub_dict[key].append(sub_tuple)
-
-    # for key in sub_dict.keys():
-
-    #     new_key = sub_dict[key]
-
-    #     list_of_docs = []
-    #     list_of_corpora = []
-
-    #     for element in new_key:
-    #         document = element[1]
-    #         corpus_temp = element[2]
-
-    #         docID_docTitle = (docID, docTitle)
-    #         list_of_docs.append(docID_docTitle)
-    #         list_of_corpora.append(corpus_temp)
-
-    #     if(len(list_of_corpora) > 0):
-    #         # perform LDA on sub_corpus
-    #         print("LIST OF DOCS: ", list_of_docs)
-    #         middle_group = createLDASubModel(list_of_corpora, amount_topics, dictionary, list_of_docs, corpus, files_in_directory)
-
-    #         for upper_dict in upper_group:
-
-    #             if key == upper_dict['id']:
-    #                 upper_dict['groups'] = middle_group
-
-    # upper_dict['groups'] = middle_group
+                for tuple_doc in topic_dict_sub[topicID_sub]:
+                    docID = tuple_doc[0]
+                    docTitle = tuple_doc[1]
+                    document_dict = {"id":docID, "label":docTitle}
+                    document_group.append(document_dict)    
+        
     data_foamtree.update({"groups": upper_group})
-
-    print("")
-
+    return ldamodel
 
 def createLDASubModel(sub_corpus, amount_topics, dictionary, files_in_sub_corpus, corpus, files_in_directory):
     import gensim

@@ -7,7 +7,8 @@ $(document).on('click','.list-group-item', function() {
     document.getElementById('name_new_config').value = $(this).text();
     var configID = $(this).attr('data-cid');
     
-
+// Insert values from Configuration model into inputs
+// Checking checkboxes for documents in Configuration
     $.ajax({
         type: 'GET',
         url: '../selectconfig/',

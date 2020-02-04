@@ -58,6 +58,7 @@
 </head>
 
 <body>
+    <!-- ONLY SHOW CONTENT IF USER IS LOGGED IN -->
     {% if user.is_authenticated %}
     <main role="main" style="height: 100%;">
         <div class="container-fluid" style="height:100%; padding:0; margin:0;">
@@ -83,6 +84,7 @@
             
                 {% block content %}
                 {% endblock %}
+            <!-- IF USER IS NOT LOGGED IN, REDIRECT TO LOGIN PAGE -->
             {% else %}
             <meta http-equiv="Refresh" content="0; url=/tool/login" />
             {% endif %}

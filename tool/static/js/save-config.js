@@ -33,7 +33,7 @@ function saveOrOverwrite(event) {
         
         
 
-        // TODO: Save configuration, if name does not exist
+        // Save configuration, if name does not exist
         if (!config_name_exists.length) {
 
             

@@ -38,8 +38,8 @@ nltk.download('punkt', quiet=True)
 # https://blog.ekbana.com/pre-processing-text-in-python-ad13ea544dae nochmal anschauen
 # https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
 
-# Create your views here.
 
+# Creating a new user
 def signup(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
@@ -50,28 +50,33 @@ def signup(request):
         form = UserCreationForm()
     return render(request, 'signup.html', {"form":form})
 
+# Saving a Configuration for analysis
 @csrf_exempt
 def saveconfig(request):
     if request.method=="POST" and request.is_ajax():
         form = ConfigurationForm(request.POST)
         if form.is_valid():
             doc_id = request.POST.getlist('documents[]')
+            # Overwriting Configuration, if the user already has a Configuration with that title
             try:
-                overwriteConfig = Configuration.objects.get(title=request.POST.get('title'))
+                overwriteConfig = Configuration.objects.get(userID = request.user.id,title=request.POST.get('title'))
                 overwriteConfig.title = request.POST.get('title')
                 overwriteConfig.topics = request.POST.get('topics')
                 overwriteConfig.dateFrom = request.POST.get('dateFrom')
                 overwriteConfig.dateUntil = request.POST.get('dateUntil')
+                overwriteConfig.userID = request.user.id
                 overwriteConfig.save()
                 overwriteConfig.documents.remove(*overwriteConfig.documents.all())
                 for i in range(len(doc_id)):
                     save_doc = int(doc_id[i])
                     overwriteConfig.documents.add(Document.objects.get(id=save_doc))
                 data = {'is_valid': True, 'title': overwriteConfig.title, 'id': overwriteConfig.id}
-                
+            # Saving a new Configuration if there is nothing to overwrite
             except Configuration.DoesNotExist:
                 overwriteConfig = None
                 config = form.save()
+                config.userID = request.user.id
+                config.save()
                 for i in range(len(doc_id)):
                     save_doc = int(doc_id[i])
                     config.documents.add(Document.objects.get(id=save_doc))
@@ -81,7 +86,7 @@ def saveconfig(request):
         else: return render(request, 'konfiguration.html')
     else: return render(request, 'konfiguration.html')
 
-
+# Deleting a Configuration for an analysis
 @csrf_exempt
 def deleteconfig(request):
     if request.method=="POST" and request.is_ajax():
@@ -92,7 +97,7 @@ def deleteconfig(request):
         return render(request, 'konfiguration.html')
     else: return render(request, 'konfiguration.html')
 
-
+# Sending values of selected Configuration to the template
 def selectconfig(request):
     if request.method=="GET" and request.is_ajax():
         config_id = int(request.GET.get('configID'))
@@ -104,6 +109,7 @@ def selectconfig(request):
         return JsonResponse(data)
     else: return render(request, 'konfiguration.html')
 
+# Deleting a Document
 @csrf_exempt
 def delete(request):
     if request.method=="POST" and request.is_ajax():
@@ -115,18 +121,20 @@ def delete(request):
         return render(request, 'konfiguration.html')
     else: return render(request, 'konfiguration.html')
 
+
 @csrf_exempt
 def konfiguration(request):
     
     if request.method=="POST":
+        # Uploading a Document and sending its properties back to template
         form = DocumentUploadForm(request.POST, request.FILES)
-        
         if form.is_valid():
 
             document = form.save(commit=False)
             name, extension = os.path.splitext(document.file.name)
             document.extension = extension
             document.title = name
+            document.userID = request.user.id
             document.save()
 
             print("Name: ", name, " | Typ: ", extension)
@@ -137,10 +145,10 @@ def konfiguration(request):
             data = {'is_valid': False}
 
             return render(request, 'konfiguration.html', {'data':data})
-
+    # Populate template with user specific Documents and Configurations
     elif request.method=="GET": 
-        document_list = Document.objects.all()
-        config_list = Configuration.objects.all()
+        document_list = Document.objects.filter(userID=request.user.id)
+        config_list = Configuration.objects.filter(userID=request.user.id)
         return render(request, 'konfiguration.html', {'documents':document_list, 'configs': config_list})           
 
 

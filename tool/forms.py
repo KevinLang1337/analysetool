@@ -2,7 +2,7 @@ from django import forms
 from .models import Document
 from .models import Configuration
 from .models import CrawlerConfiguration
-from .models import Crawlingurls
+from .models import Crawlerurl
 
 # Linking forms to models
 class DocumentUploadForm(forms.ModelForm):
@@ -20,7 +20,7 @@ class CrawlerConfigurationForm(forms.ModelForm):
         model = CrawlerConfiguration
         fields = ('title','stopAfter', 'amountSites','dateFrom', 'dateUntil', 'urls')
 
-class CrawlingurlsForm(forms.ModelForm):
+class CrawlerurlForm(forms.ModelForm):
     class Meta:
-        model = Crawlingurls
+        model = Crawlerurl
         fields = ('title',)

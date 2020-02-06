@@ -28,10 +28,10 @@ from django.http import JsonResponse
 from .forms import DocumentUploadForm
 from .forms import ConfigurationForm
 from .forms import CrawlerConfigurationForm
-from .forms import CrawlingurlsForm
+from .forms import CrawlerurlForm
 from .models import Document
 from .models import Configuration
-from .models import Crawlingurls
+from .models import Crawlerurl
 from .models import CrawlerConfiguration
 import json
 from django.contrib.auth import login, authenticate
@@ -132,7 +132,7 @@ def deletecrawlersource(request):
         url_id = request.POST.getlist('url_id[]')
         for i in range(len(url_id)):
             delete_url = int(url_id[i])
-            url = Crawlingurls.objects.get(id=delete_url)
+            url = Crawlerurl.objects.get(id=delete_url)
             url.delete()
         return HttpResponse()
     else: return render(request, 'webcrawler.html')
@@ -171,7 +171,7 @@ def konfiguration(request):
 @csrf_exempt
 def saveurl(request):
     if request.method=="POST" and request.is_ajax():
-        form = CrawlingurlsForm(request.POST)
+        form = CrawlerurlForm(request.POST)
         if form.is_valid():
             new_url = form.save(commit =False)
             hallo = request.POST.get('title')
@@ -238,7 +238,7 @@ def webcrawler(request):
         return render(request, 'webcrawler.html')
 
     elif request.method=="GET": 
-        urls_list = Crawlingurls.objects.filter(userID=request.user.id)
+        urls_list = Crawlerurl.objects.filter(userID=request.user.id)
         crawler_config_list = CrawlerConfiguration.objects.filter(userID=request.user.id)
         return render(request, 'webcrawler.html', {'urls':urls_list, 'crawler_configs': crawler_config_list})   
 

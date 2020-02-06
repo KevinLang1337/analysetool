@@ -14,7 +14,7 @@ class Document(models.Model):
 
 
 # Represents URLs for crawling added by the user
-class Crawlingurls(models.Model):
+class Crawlerurl(models.Model):
     title = models.CharField(max_length=300, blank=True)
     userID = models.IntegerField(blank=True, null=True)
 
@@ -28,7 +28,7 @@ class CrawlerConfiguration(models.Model):
     amountSites = models.IntegerField(blank=True)
     dateFrom = models.CharField(max_length=100, blank=True)
     dateUntil = models.CharField(max_length=100, blank=True)
-    urls = models.ManyToManyField(Crawlingurls, blank=True)
+    urls = models.ManyToManyField(Crawlerurl, blank=True)
     userID = models.IntegerField(blank=True, null=True)
 
     def __str__(self):

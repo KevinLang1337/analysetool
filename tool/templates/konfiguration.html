@@ -15,13 +15,11 @@
   <!-- LIST LEFT SIDE-->
   <ul id="config_list" class="list-group with_scrollbar" style="flex-grow:1;">
     {% for config in configs %}
-    <li data-cid="{{config.id}}" class="list-group-item">{{config.title}}</li>
+    <li data-cid="{{config.id}}" class=" config-list-item list-group-item">{{config.title}}</li>
     {% endfor %}
   </ul>
 
-  <!-- BUTTONS LEFT SIDE-->
-  <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
-      class="glyphicon glyphicon-file gly-2x"></span><br>Auswahl öffnen</button>
+  <!-- BUTTON DELETE CONFIG -->
   <button type="button" onclick="deleteConfig();"class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
       class="glyphicon glyphicon-minus gly-2x"></span><br>Auswahl löschen</button>
 </div>
@@ -93,25 +91,12 @@
 
   <div style="flex-grow: 1;"></div>
 
-  <!-- SAVINGLOCATION RESULTS-->
 
-  {% csrf_token %}
-  <h1 class="title">Speicherort Ergebnisse</h1>
 
-  <div class="input-group">
-    <input type="text" class="form-control" placeholder="Search for...">
-    <span class="input-group-btn">
-      <button class="btn btn-primary" type="button"><span class="glyphicon glyphicon-folder-open"></span></button>
-    </span>
-  </div>
-
-  <div style="flex-grow: 1;"></div>
-
-  <!-- FILEPATH TO SOURCES-->
-  <h1 class="title">Dateipfad zu Quellen</h1>
+ 
 
   <!-- BUTTON TO TRIGGER FILEUPLOAD -->
-  <button type="button" class="btn btn-primary js-upload-photos">
+  <button type="button" class="btn btn-primary js-upload-docs">
     <span class="glyphicon glyphicon-cloud-upload"></span> Dateien hochladen
   </button>
 
@@ -205,23 +190,6 @@
   <input type="button" id="cancel_delete_button" value="Abbruch" />
 </div> 
 
-<!-- DIALOGUE OVERWRITE -->
-<div id="dia_overwrite" style="display:none; cursor: default">
-  <p></p> 
-  <p>Es existiert bereits eine Konfiguration mit diesem Namen. Soll diese überschrieben werden?</p>
-  <input type="button" id="confirm_overwrite_button" value="Ja, überschreiben" /> 
-  <input type="button" id="cancel_overwrite_button" value="Abbruch" />
-</div> 
 
-<!-- DIALOGUE SAVE -->
-<div id="dia_save" style="display:none; cursor: default">
-  <p></p> 
-  <p>Bitte geben Sie den Namen der Konfiguration ein.</p>
-  <form id="save_new_config_form" method="POST">
-  <input style ="margin-bottom: 5%;"type="text" class="form-control" id="name_new_config" name="title">
-  <input type="button" id="save_config_button" value="Bestätigen" /> 
-  <input type="button" id="cancel_save_config_button" value="Abbruch" />
-</form>
-</div> 
 
 {% endblock %}

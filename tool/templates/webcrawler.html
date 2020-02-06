@@ -14,17 +14,13 @@
     <div class="col-md-3" style="flex-flow: column; display:flex;">
       <h1 class="title">Gespeicherte Konfigurationen</h1>
 
-      <!-- LIST LEFT SIDE-->
-      <ul class="list-group with_scrollbar" style="flex-grow: 1;">
-        <li class="list-group-item">Cras justo odio</li>
-        <li class="list-group-item">Dapibus ac facilisis in</li>
-        <li class="list-group-item">Morbi leo risus</li>
-        <li class="list-group-item">Porta ac consectetur ac</li>
-        <li class="list-group-item">Vestibulum at eros</li>
-      </ul>
-      <!-- BUTTONS LEFT SIDE-->
-      <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
-          class="glyphicon glyphicon-file gly-2x"></span><br>Auswahl öffnen</button>
+  <!-- LIST LEFT SIDE-->
+  <ul id="crawler_config_list" class="list-group with_scrollbar" style="flex-grow:1;">
+    {% for crawler_config in crawler_configs %}
+    <li data-cid="{{crawler_config.id}}" class=" crawler-list-item list-group-item">{{crawler_config.title}}</li>
+    {% endfor %}
+  </ul>
+      <!-- BUTTONS OPEN CRAWLER CONFIG -->
       <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
           class="glyphicon glyphicon-minus gly-2x"></span><br>Auswahl löschen</button>
     </div>
@@ -35,45 +31,32 @@
             <h1 class="title" style="text-align:left;">Zu durchsuchende Webseiten</h1>
         <div class="row" style="height: 100%; flex-grow: 1;">
                 
-            <div class="col-11 with_scrollbar" style="flex-flow: column; display: flex; margin: 0%;">
+            <div class="col-12 with_scrollbar" style="flex-flow: column; display: flex; margin: 0%;">
 
       
       <!-- TABLE MIDDLE -->
-      <table class="table">
+      <table id = "crawler_source_table" class="table">
         <thead>
           <tr>
             <!-- TABLE HEADER -->
             <th><input type="checkbox"  id="allActive"></th>
-            <th scope="col">URL</th>
+            <th  scope="col">URL</th>
+            <th scope="col"><a class="deleteAll" href="">Löschen</a></th>
           </tr>
         </thead>
         <tbody>
           <!-- TABLE ITEMS -->
-          <tr class = "docIDClass">
-            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
-            <td>Wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwasserwirtschaft_2019</td>
-          </tr>
-          <tr>
-            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
-            <td>Wasserwirtschaft_2019</td>
-          </tr>
-          <tr>
-            <th scope="row"><input type="checkbox" class="form-check-input" id="exampleCheck1"></th>
-            <td>Wasserwirtschaft_2019</td>
+          {% for url in urls %}
+          <tr class = "docIDClass" data-uid="{{url.id}}">
+            <td scope="row"><input type="checkbox"></td>
+            <td class="url-list-item">{{url.title}}</td>
+            <td><a class="delete" href=""><span class="glyphicon glyphicon-trash"></span></a> </td>
+            {% endfor %}
           </tr>
         </tbody>
       </table>
             </div>
-            <div class="col-1" style="margin: 0%; padding:0%">
-                    <div class="btn-group-vertical btn-group-lg" style="margin-left:5%">
-                            <button type="button" class="btn btn-primary">
-                                <span class="glyphicon glyphicon-plus"></span></button>
-                            <button type="button" class="btn btn-primary">
-                                 <span class="glyphicon glyphicon-pencil"></span></button>
-                             <button type="button" class="btn btn-primary">
-                                <span class="glyphicon glyphicon-minus"></span></button>
-                          </div>
-            </div>
+            
         </div>
     </div>
 
@@ -100,21 +83,20 @@
         </div>
       </div>
 
-      <div style="flex-grow: 1;"></div>
 
-      <!-- SAVING LOCATION RESULTS-->
-      <h1 class="title">Speicherort Ergebnisse</h1>
-      <div class="input-group">
-        <input type="text" class="form-control" placeholder="Search for...">
-        <span class="input-group-btn">
-          <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-folder-open"></span></button>
-        </span>
-      </div>
 
 
       <div style="flex-grow: 1;"></div>
 
-      <h1 class="title" id="EinstellungenID">Einstellungen</h1>
+ 
+
+ <!-- BUTTON TO ADD URLs -->
+ <button id="url_to_table_button" type="button" class="btn btn-primary">
+   <span class="glyphicon glyphicon-plus"></span> URLs hinzufügen
+ </button>
+
+ <div style="flex-grow: 1;"></div>
+      <h1 style ="padding-top: 2%;"class="title" id="EinstellungenID">Einstellungen</h1>
       <form>
         <!-- SETTINGS RIGHT SIDE-->
         <div class="form-group row">
@@ -173,7 +155,37 @@
 
     </div>
   </body>
-    
+
+  <!-- DIALOGUE ADD URL -->
+  <div id="dia_add_url" style="display:none; cursor: default">
+    <p></p> 
+    <p>Bitte geben Sie die URL ein, die Sie hinzufügen möchten.</p>
+    <form id="dia_save_url" method="POST">
+    <input style ="margin-bottom: 5%;"type="text" class="form-control" id="new_url" name="url">
+    <input type="button" id="add_url_button" value="Bestätigen" /> 
+    <input type="button" id="cancel_add_url_button" value="Abbruch" />
+  </form>
+  </div> 
+
+  <!-- DIALOGUE OVERWRITE -->
+<div id="dia_url_exists" style="display:none; cursor: default">
+  <p></p> 
+  <p>Diese URL wurde bereits hinzugefügt.</p>
+  <input type="button" id="cancel_url_exists_button" value="OK" />
+</div> 
+
+<!-- DIALOGUE CONFIRM DELETING ALL URLS -->
+<div id="confirm_delete_urls" style="display:none; cursor: default">
+  <p></p> 
+  <p>Sollen wirklich alle URLs gelöscht werden?</p>
+  <p>Zum Fortfahren klicken Sie bitte auf "Ja".</p> 
+  <input type="button" id="delete_all_urls_button" value="Ja" /> 
+  <input type="button" id="cancel_delete_urls_button" value="Abbruch" />
+</div> 
+
+
+
+</html>
 
 {% endblock %}
 

@@ -1,7 +1,8 @@
+
 // Saving configurations
 
-function saveOrOverwrite() {
-    var configList = document.getElementById('config_list');
+function saveOrOverwrite(event) {
+    var crawler_source_table = document.getElementById('crawler_source_table');
     $.blockUI({
         message: $('#dia_save'),
         overlayCSS: { cursor: "default" }
@@ -10,17 +11,17 @@ function saveOrOverwrite() {
     $('.blockUI.blockMsg').center();
 
     // Hide dialogue if user cancels saving
-    $('#cancel_save_config_button').off().on('click', function () {
+    $('#cancel_save_config_button').click(function () {
         $.unblockUI();
-        
+        event.preventDefault()
         return false;
     });
 
     // Save configuration with name from text input
-    $('#save_config_button').off().on('click', function () {
+    $('#save_config_button').click(function () {
         var newConfigName = document.getElementById('name_new_config').value;
         newConfigName = newConfigName.trim();
-        var config_name_exists = $('.config-list-item').filter(function () {
+        var config_name_exists = $('.crawler-list-item').filter(function () {
             return $(this).text() == newConfigName;
         });
         var documents = [],
@@ -60,12 +61,12 @@ function saveOrOverwrite() {
                     configList.appendChild(entry);
                     }
                     $.unblockUI();
-                    
+                    event.preventDefault()
                     return false;;
                 }
             });
             
-            
+            event.preventDefault()
             return false;
         }
 
@@ -79,14 +80,14 @@ function saveOrOverwrite() {
             $('.blockUI.blockMsg').center();
 
             // Hide dialogue if User cancels overwriting
-            $('#cancel_overwrite_button').off().on('click',function () {
+            $('#cancel_overwrite_button').click(function (event) {
                 $.unblockUI();
-                
+                event.preventDefault()
                 return false;
             });
 
             // Overwrite configuration with name from text input
-            $('#confirm_overwrite_button').off().on('click',function () {
+            $('#confirm_overwrite_button').click(function () {
                 $.ajax({
                     type: 'POST',
                     url: '../saveconfig/',
@@ -102,19 +103,19 @@ function saveOrOverwrite() {
                     },
                     success: function () {
                         $.unblockUI();
-                        
+                        event.preventDefault()
                         return false;;
                     }
                 });
                 
-               
+                event.preventDefault()
                 return false;
             });
-            
+            event.preventDefault()
             return false;
         }
         
-        
+        // TODO: Ajax call to server
         
 
 

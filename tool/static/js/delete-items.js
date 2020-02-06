@@ -18,9 +18,93 @@ function deleteConfig(){
 }
 }
 
+
+// Delete all URLs and their Model entries onclick
+$(function(){
+    $('#crawler_source_table').on('click','tr a.deleteAll',function(e){
+        e.preventDefault();
+        var sourceTable = $(this).parents('tr').parents('thead').parents('table')
+        var tableLength = $(sourceTable).prop('rows').length;
+
+        // When table is empty, do nothing
+        if(tableLength<=1){
+            return false;
+        }
+
+        // Ask User if they really want to delete all sources
+        $.blockUI({
+            message: $('#confirm_delete_urls'),
+            overlayCSS: {
+                cursor: 'default',
+                
+            }
+            
+        });
+        $('.blockUI.blockMsg').center();
+        // Cancel process if User doesn't want to delete
+        $('#cancel_delete_urls_button').click(function() { 
+            $.unblockUI(); 
+            return false; 
+        }); 
+        // Continue process
+        $('#delete_all_urls_button').click(function() { 
+            $.unblockUI();  
+        
+
+
+            var allIDs = [];
+        
+            // Gather all IDs of documents which are to be deleted
+            $(".docIDClass").each(function() {
+                allIDs.push($(this).attr("data-uid"))
+            })
+            // Delete all rows from table
+            sourceTable.find('tbody').empty();
+            // Send IDs to server
+        $.ajax({
+            type: 'POST',
+            url: '../deletecrawlersource/',
+            data:{
+                action: 'post',
+                url_id:allIDs
+            },
+            success: function () {
+                
+            }
+        });  
+    });
+}); 
+
+// Delete Table Row and Model Entry of URL when trashcan is clicked
+$(function(){
+    $('#crawler_source_table').on('click','tr a.delete',function(e){
+       e.preventDefault();
+      
+     
+      var url_id = [];
+      url_id.push($(this).closest("tr").attr("data-uid"));
+
+      $(this).parents('tr').remove();
+
+        $.ajax({
+            type: 'POST',
+            url: '../deletecrawlersource/',
+            data:{
+                action: 'post',
+                url_id:url_id
+            },
+            success: function () {
+                
+            }
+        });  
+    });
+});
+
+
+
 // Delete Table Row and Model Entry of Document when trashcan is clicked
  $(function(){
-    $('table').on('click','tr a.delete',function(e){
+    $('#source_table').on('click','tr a.delete',function(e){
        e.preventDefault();
       
      
@@ -46,7 +130,7 @@ function deleteConfig(){
 
 // Delete all Documents and Model entries onclick
 $(function(){
-    $('table').on('click','tr a.deleteAll',function(e){
+    $('#source_table').on('click','tr a.deleteAll',function(e){
         e.preventDefault();
         var sourceTable = $(this).parents('tr').parents('thead').parents('table')
         var tableLength = $(sourceTable).prop('rows').length;
@@ -107,4 +191,4 @@ $(function(){
  
 
  
- 
+})

@@ -27,8 +27,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .forms import DocumentUploadForm
 from .forms import ConfigurationForm
+from .forms import CrawlerConfigurationForm
+from .forms import CrawlingurlsForm
 from .models import Document
 from .models import Configuration
+from .models import Crawlingurls
+from .models import CrawlerConfiguration
 import json
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -121,6 +125,18 @@ def delete(request):
         return render(request, 'konfiguration.html')
     else: return render(request, 'konfiguration.html')
 
+# Deleting an URL
+@csrf_exempt
+def deletecrawlersource(request):
+    if request.method=="POST" and request.is_ajax():
+        url_id = request.POST.getlist('url_id[]')
+        for i in range(len(url_id)):
+            delete_url = int(url_id[i])
+            url = Crawlingurls.objects.get(id=delete_url)
+            url.delete()
+        return HttpResponse()
+    else: return render(request, 'webcrawler.html')
+
 
 @csrf_exempt
 def konfiguration(request):
@@ -151,6 +167,60 @@ def konfiguration(request):
         config_list = Configuration.objects.filter(userID=request.user.id)
         return render(request, 'konfiguration.html', {'documents':document_list, 'configs': config_list})           
 
+# Saving a URL for crawling
+@csrf_exempt
+def saveurl(request):
+    if request.method=="POST" and request.is_ajax():
+        form = CrawlingurlsForm(request.POST)
+        if form.is_valid():
+            new_url = form.save(commit =False)
+            hallo = request.POST.get('title')
+            print(hallo)
+            new_url.title = request.POST.get('title')
+            new_url.userID = request.user.id
+            new_url.save()
+            data = {'is_valid': True, 'title':new_url.title, 'id': new_url.id}
+            return JsonResponse(data)
+        else: 
+            data = {'is_valid': False}
+            return JsonResponse(data)
+    else: return render(request, 'webcrawler.html')
+
+# Saving a Configuration for crawling
+@csrf_exempt
+def crawlersaveconfig(request):
+    if request.method=="POST" and request.is_ajax():
+        form = CrawlerConfigurationForm(request.POST)
+        if form.is_valid():
+            doc_id = request.POST.getlist('documents[]')
+            # Overwriting Configuration, if the user already has a Configuration with that title
+            try:
+                overwriteConfig = Configuration.objects.get(userID = request.user.id,title=request.POST.get('title'))
+                overwriteConfig.title = request.POST.get('title')
+                overwriteConfig.topics = request.POST.get('topics')
+                overwriteConfig.dateFrom = request.POST.get('dateFrom')
+                overwriteConfig.dateUntil = request.POST.get('dateUntil')
+                overwriteConfig.userID = request.user.id
+                overwriteConfig.save()
+                overwriteConfig.documents.remove(*overwriteConfig.documents.all())
+                for i in range(len(doc_id)):
+                    save_doc = int(doc_id[i])
+                    overwriteConfig.documents.add(Document.objects.get(id=save_doc))
+                data = {'is_valid': True, 'title': overwriteConfig.title, 'id': overwriteConfig.id}
+            # Saving a new Configuration if there is nothing to overwrite
+            except Configuration.DoesNotExist:
+                overwriteConfig = None
+                config = form.save()
+                config.userID = request.user.id
+                config.save()
+                for i in range(len(doc_id)):
+                    save_doc = int(doc_id[i])
+                    config.documents.add(Document.objects.get(id=save_doc))
+                
+                data = {'is_valid': True, 'title': config.title, 'id': config.id}
+            return JsonResponse(data)
+        else: return render(request, 'webcrawler.html')
+    else: return render(request, 'webcrawler.html')
 
 @csrf_exempt
 def webcrawler(request):
@@ -167,8 +237,10 @@ def webcrawler(request):
 
         return render(request, 'webcrawler.html')
 
-    else:
-        return render(request, 'webcrawler.html')
+    elif request.method=="GET": 
+        urls_list = Crawlingurls.objects.filter(userID=request.user.id)
+        crawler_config_list = CrawlerConfiguration.objects.filter(userID=request.user.id)
+        return render(request, 'webcrawler.html', {'urls':urls_list, 'crawler_configs': crawler_config_list})   
 
 
 def index(request):

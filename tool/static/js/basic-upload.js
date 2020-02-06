@@ -1,5 +1,5 @@
 $(function () {
-  $(".js-upload-photos").click(function () { 
+  $(".js-upload-docs").click(function () { 
     $("#fileupload").click();
   });
 

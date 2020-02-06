@@ -8,9 +8,12 @@ urlpatterns = [
     path('ergebnisse/', views.ergebnisse, name='ergebnisse'),
     path('delete/', views.delete, name='delete'),
     path('saveconfig/', views.saveconfig, name='saveconfig'),
+    path('crawlersaveconfig/', views.crawlersaveconfig, name='crawlersaveconfig'),
     path('deleteconfig/', views.deleteconfig, name='deleteconfig'),
     path('selectconfig/', views.selectconfig, name='selectconfig'),
     path('', include("django.contrib.auth.urls")),
     path('signup/', views.signup, name='signup'),
+    path('saveurl/', views.saveurl, name='saveurl'),
+    path('deletecrawlersource/', views.deletecrawlersource, name='deletecrawlersource'),
     
 ]

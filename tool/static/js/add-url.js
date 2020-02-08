@@ -1,6 +1,6 @@
 $(function () {
     $("#url_to_table_button").off().on('click', function () { 
-      // Saving configurations
+      
 
 
     
@@ -18,7 +18,8 @@ $(function () {
     });
 
     // Save configuration with name from text input
-    $('#add_url_button').off().on('click', function () {
+    $('#dia_save_url').off().on('submit', function (e) {
+        e.preventDefault();
         var newURLName = document.getElementById('new_url').value;
         newURLName = newURLName.trim();
         var url_exists = $('.url-list-item').filter(function () {

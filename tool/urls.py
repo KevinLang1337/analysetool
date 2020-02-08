@@ -14,6 +14,7 @@ urlpatterns = [
     path('', include("django.contrib.auth.urls")),
     path('signup/', views.signup, name='signup'),
     path('saveurl/', views.saveurl, name='saveurl'),
+    path('startcrawl/', views.startcrawl, name='startcrawl'),
     path('deletecrawlersource/', views.deletecrawlersource, name='deletecrawlersource'),
     
 ]

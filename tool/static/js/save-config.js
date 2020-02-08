@@ -17,7 +17,8 @@ function saveOrOverwrite() {
     });
 
     // Save configuration with name from text input
-    $('#save_config_button').off().on('click', function () {
+    $('#save_new_config_form').off().on('submit', function (e) {
+        e.preventDefault();
         var newConfigName = document.getElementById('name_new_config').value;
         newConfigName = newConfigName.trim();
         var config_name_exists = $('.config-list-item').filter(function () {

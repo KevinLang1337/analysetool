@@ -42,6 +42,22 @@ nltk.download('punkt', quiet=True)
 # https://blog.ekbana.com/pre-processing-text-in-python-ad13ea544dae nochmal anschauen
 # https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
 
+@csrf_exempt
+def startcrawl(request):
+    if request.is_ajax() and request.POST.get('action') == 'post':
+        amount_websites = request.POST.get('amount')
+        timeout_crawling = request.POST.get('timeout_crawling')
+        date_from = request.POST.get('date_from')
+        date_until = request.POST.get('date_until')
+        url_ids = request.POST.getlist('url_ids[]')
+        
+        # crawling(amount_websites, timeout_crawling, date_from, date_until, url_ids)
+        
+
+        return HttpResponse()
+
+    else: return render(request, 'webcrawler.html')
+
 
 # Creating a new user
 def signup(request):

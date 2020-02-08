@@ -21,37 +21,21 @@ def process_pdf(amount, date_from, date_until, file_ids):
     print(date_from)
     print(date_until)
 
-    from pdfminer.pdfparser import PDFParser
-    from pdfminer.pdfdocument import PDFDocument
-    from pdfminer.pdfpage import PDFPage
-    from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
-    from pdfminer.converter import PDFPageAggregator
-    from pdfminer.layout import LAParams, LTTextBox, LTTextLine
-    from pdfminer.pdfinterp import resolve1
-    from os import listdir
-    from os.path import isfile, join
     from datetime import datetime
-    import time
     from console_progressbar import ProgressBar
     from .models import Document
+    import codecs
 
-    # dir = "tool/documents/"  # Directory to stored documents
-    dir = "media/documents/"
-    # files_in_dir = [f for f in listdir(dir) if isfile(
-    #     join(dir, f))]  # all files in the directory
-
-    files_in_dir = []
+    documents_in_dir = []
 
     print("File_IDs", file_ids)
 
     for id in file_ids:
         id = int(id)
         doc = Document.objects.get(id=id)
-        file_name = str(doc.file).replace("documents/", "")
-        files_in_dir.append(file_name)
-        print("Doc: ", doc.file)
+        documents_in_dir.append(doc)
 
-    number_files = len(files_in_dir)  # amount of files in the directory
+    number_files = len(documents_in_dir)  # amount of files in the directory
 
     pb = ProgressBar(total=100, prefix='Seiten zu ', suffix=' extrahiert',
                      decimals=0, length=50, fill='|', zfill='-')
@@ -66,52 +50,85 @@ def process_pdf(amount, date_from, date_until, file_ids):
 
     file_counter = 1
     # --- EXTRACT TEXT FROM DOCUMENTS ---
-    for file in files_in_dir:
-        print("#--- Dokument ", file_counter, ": ", file, " ---#")
-
+    for document in documents_in_dir:
         extracted_text = ''
+        if document.extension == ".pdf":
+            print("#--- Dokument ", file_counter, ": ", document, " ---#")
+            extracted_text = extractTextFromPDF(document, pb, extracted_text)
 
-        fp = open("media/documents/"+file, 'rb')
-        parser = PDFParser(fp)
-        doc = PDFDocument(parser)
-        parser.set_document(doc)
-        rsrcmgr = PDFResourceManager()
-        laparams = LAParams()
-        laparams.char_margin = 1.0
-        laparams.word_margin = 1.0
-        device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
+        elif document.extension == ".txt":
+            # Open the file with read only permit
+            f = codecs.open("media/"+str(document.file), "r", 'utf-8')
+            # use readlines to read all lines in the file
+            # The variable "lines" is a list containing all lines in the file
+            extracted_text = f.readlines()
+            # close the file after reading the lines.
+            f.close()
+        else:
+            print("")
+            print("##### Warnung ####")    
+            print("Dokumentenendung "+str(document.extension)+" unbekannt.")
+            print("##################")
+            print("")    
+            documents_in_dir.remove(document)
 
-        page_counter = 1
-        for page in PDFPage.create_pages(doc):
-            interpreter.process_page(page)
-            layout = device.get_result()
-            for lt_obj in layout:
-                if isinstance(lt_obj, LTTextBox) or isinstance(lt_obj, LTTextLine):
-                    extracted_text += lt_obj.get_text()
-
-            number_of_pages = resolve1(doc.catalog['Pages'])['Count']
-            pb.print_progress_bar(100/number_of_pages*page_counter)
-            page_counter += 1
-
-        text_without_numbers = removeNumbers(extracted_text)
-        detected_language = languageDetection(text_without_numbers)
-        print("Sprache erkannt: ", detected_language)
-        text_without_stopwords = removeStopwords(text_without_numbers, detected_language)
-        lemmatized_tokens = lemmatizeTokens(text_without_stopwords, detected_language)
-        list_of_tokens.append(lemmatized_tokens)
-        print("Anzahl Einträge: ", len(lemmatized_tokens))
-        print("##-------------------------------------------##")
-        print("")
-        file_counter += 1
+        if (extracted_text != ''):
+            text_without_numbers = removeNumbers(extracted_text)
+            detected_language = languageDetection(text_without_numbers)
+            print("Sprache erkannt: ", detected_language)
+            text_without_stopwords = removeStopwords(text_without_numbers, detected_language)
+            lemmatized_tokens = lemmatizeTokens(text_without_stopwords, detected_language)
+            list_of_tokens.append(lemmatized_tokens)
+            print("Anzahl Einträge: ", len(lemmatized_tokens))
+            print("##-------------------------------------------##")
+            print("")
+            file_counter += 1
+           
 
     # --- PRINT DURATION OF ANALYSIS ---
-    useLDA(list_of_tokens, amount, files_in_dir)
+    if len(list_of_tokens) !=  0:
+        useLDA(list_of_tokens, amount, documents_in_dir)
+    else:
+            print("Es konnte keine Analyse durchgeführt werden.")
+            print("") 
     dateTimeObjEnd = datetime.now()
     analyse_dauer = dateTimeObjEnd - dateTimeObj
 
     print("Analyse beendet")
     print("Analysedauer: ", analyse_dauer)
+
+def extractTextFromPDF(document, progressbar, extracted_text):
+    from pdfminer.pdfparser import PDFParser
+    from pdfminer.pdfdocument import PDFDocument
+    from pdfminer.pdfpage import PDFPage
+    from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+    from pdfminer.converter import PDFPageAggregator
+    from pdfminer.layout import LAParams, LTTextBox, LTTextLine
+    from pdfminer.pdfinterp import resolve1
+
+    fp = open("media/"+str(document.file), 'rb')
+    parser = PDFParser(fp)
+    doc = PDFDocument(parser)
+    parser.set_document(doc)
+    rsrcmgr = PDFResourceManager()
+    laparams = LAParams()
+    laparams.char_margin = 1.0
+    laparams.word_margin = 1.0
+    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+
+    page_counter = 1
+    for page in PDFPage.create_pages(doc):
+        interpreter.process_page(page)
+        layout = device.get_result()
+        for lt_obj in layout:
+            if isinstance(lt_obj, LTTextBox) or isinstance(lt_obj, LTTextLine):
+                extracted_text += lt_obj.get_text()
+
+        number_of_pages = resolve1(doc.catalog['Pages'])['Count']
+        progressbar.print_progress_bar(100/number_of_pages*page_counter)
+        page_counter += 1
+    return extracted_text
 
 # --- DELETE NUMBERS FROM EXTRACTED TEXT -----
 
@@ -183,7 +200,7 @@ def removeStopwords(text, language):
 
         return filtered_sentence    
 
-# --- USE LEMMATIZATION ON EXTRACTED TEXT ----
+# --- USE LEMMATIZATION ON EXTRACTED TEXT ---
 def lemmatizeTokens(list_with_tokens, language):
     import spacy
     from collections import Counter
@@ -242,12 +259,13 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
     # SAVE DOCID AND DOCTITLE IN TOPIC_DICTIONARY
     for docID in range(len(files_in_directory)):
         topic_vector = ldamodel[corpus[docID]]
-        print("Doc ", docID, " (", files_in_directory[docID],")")
+        file_temp = str(files_in_directory[docID])+str(files_in_directory[docID].extension)
+        print("Doc ", docID, " (", file_temp,")")
         print("Vector: ", topic_vector)
         print("---")
 
         for topicID, probability in topic_vector:
-            tuple_temp = (docID, files_in_directory[docID])
+            tuple_temp = (docID, file_temp)
             topic_dict[topicID].append(tuple_temp)
 
     print(" # # # # # # # # # # # # # ")
@@ -338,68 +356,6 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
         
     data_foamtree.update({"groups": upper_group})
     return ldamodel
-
-def createLDASubModel(sub_corpus, amount_topics, dictionary, files_in_sub_corpus, corpus, files_in_directory):
-    import gensim
-
-    print("###################")
-    print("Sub_corpus: ", sub_corpus)
-    print("Anzahl: ", amount_topics)
-    print("Dic: ", dictionary)
-    print("Files sub: ", files_in_sub_corpus)
-    print("Files: ", files_in_directory)
-
-    # perform LDA on sub_corpus
-    ldamodel = gensim.models.ldamodel.LdaModel(
-        corpus=sub_corpus, num_topics=amount_topics, id2word=dictionary,
-        passes=15, minimum_probability=0.0, callbacks=None)
-
-    # Create dictionary out of topics
-    sub_topic_dict = {k: [] for k in range(0, amount_topics)}
-
-    for file_temp in files_in_sub_corpus:
-        (docID, docTitle) = file_temp
-        topic_vector = ldamodel[corpus[docID]]
-
-        for topicID, prob in topic_vector:
-
-            temp_tuple = (docID, files_in_directory[docID], prob)
-            sub_topic_dict[topicID].append(temp_tuple)
-
-    middle_group = []
-
-    for key in sorted(sub_topic_dict.keys()):
-        if len(sub_topic_dict[key]) > 0:
-
-            sub_topic_title = "Topic "
-            sub_topic_title += str(key)
-            sub_topic_title += ": ["
-            test = ldamodel.show_topic(key, 5)
-            title_text = ""
-
-            for item in test:
-                title_text += item[0]
-                title_text += ", "
-            title_text = title_text[:-2]
-
-            sub_topic_title += title_text
-            sub_topic_title += "]"
-
-            document_group = []
-
-            middle_dict = {"label": sub_topic_title, "groups": document_group}
-            middle_group.append(middle_dict)
-
-            print(" #### KEY ", key, " ####")
-            for document_tuple in sub_topic_dict[key]:
-                print("DOCUMENT TUPLE: ", document_tuple)
-                docID = document_tuple[0]
-                docTitle = document_tuple[1]
-
-                document_dict = {"label": docTitle}
-                document_group.append(document_dict)
-
-    return middle_group
 
 
 def prepareDataForWordcloud(ldamodel, corpus, amount_items):

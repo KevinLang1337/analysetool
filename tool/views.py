@@ -53,7 +53,7 @@ def startcrawl(request):
         
         # crawling(amount_websites, timeout_crawling, date_from, date_until, url_ids)
         
-
+        
         return HttpResponse()
 
     else: return render(request, 'webcrawler.html')
@@ -206,32 +206,39 @@ def saveurl(request):
 @csrf_exempt
 def crawlersaveconfig(request):
     if request.method=="POST" and request.is_ajax():
+        print("Hi")
         form = CrawlerConfigurationForm(request.POST)
         if form.is_valid():
-            doc_id = request.POST.getlist('documents[]')
+            url_id = request.POST.getlist('urls[]')
             # Overwriting Configuration, if the user already has a Configuration with that title
             try:
-                overwriteConfig = Configuration.objects.get(userID = request.user.id,title=request.POST.get('title'))
+                overwriteConfig = CrawlerConfiguration.objects.get(userID = request.user.id,title=request.POST.get('title'))
                 overwriteConfig.title = request.POST.get('title')
-                overwriteConfig.topics = request.POST.get('topics')
+                overwriteConfig.amountSites = request.POST.get('sites')
+                overwriteConfig.stopAfter = request.POST.get('timeout')
                 overwriteConfig.dateFrom = request.POST.get('dateFrom')
                 overwriteConfig.dateUntil = request.POST.get('dateUntil')
                 overwriteConfig.userID = request.user.id
                 overwriteConfig.save()
-                overwriteConfig.documents.remove(*overwriteConfig.documents.all())
-                for i in range(len(doc_id)):
-                    save_doc = int(doc_id[i])
-                    overwriteConfig.documents.add(Document.objects.get(id=save_doc))
+                overwriteConfig.urls.remove(*overwriteConfig.urls.all())
+                for i in range(len(url_id)):
+                    save_doc = int(url_id[i])
+                    overwriteConfig.urls.add(Crawlerurl.objects.get(id=save_doc))
                 data = {'is_valid': True, 'title': overwriteConfig.title, 'id': overwriteConfig.id}
             # Saving a new Configuration if there is nothing to overwrite
-            except Configuration.DoesNotExist:
+            except CrawlerConfiguration.DoesNotExist:
                 overwriteConfig = None
-                config = form.save()
+                config = form.save(commit=False)
+                config.title = request.POST.get('title')
+                config.amountSites = int(request.POST.get('sites'))
+                config.stopAfter = int(request.POST.get('timeout'))
+                config.dateFrom = request.POST.get('dateFrom')
+                config.dateUntil = request.POST.get('dateUntil')
                 config.userID = request.user.id
                 config.save()
                 for i in range(len(doc_id)):
                     save_doc = int(doc_id[i])
-                    config.documents.add(Document.objects.get(id=save_doc))
+                    config.urls.add(Crawlerurl.objects.get(id=save_doc))
                 
                 data = {'is_valid': True, 'title': config.title, 'id': config.id}
             return JsonResponse(data)

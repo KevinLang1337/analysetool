@@ -122,6 +122,18 @@ def deleteconfig(request):
     else: return render(request, 'konfiguration.html')
 
 # Sending values of selected Configuration to the template
+def crawlerselectconfig(request):
+    if request.method=="GET" and request.is_ajax():
+        config_id = int(request.GET.get('configID'))
+        select_config = CrawlerConfiguration.objects.get(id=config_id)
+        id_list = []
+        for url in select_config.urls.all():
+            id_list.append(url.id)
+        data = {'is_valid': True, 'id_list': id_list, 'timeout': select_config.stopAfter,'sites': select_config.amountSites, 'dateFrom': select_config.dateFrom, 'dateUntil': select_config.dateUntil}
+        return JsonResponse(data)
+    else: return render(request, 'webcrawler.html')    
+
+# Sending values of selected Configuration to the template
 def selectconfig(request):
     if request.method=="GET" and request.is_ajax():
         config_id = int(request.GET.get('configID'))
@@ -236,14 +248,14 @@ def crawlersaveconfig(request):
                 overwriteConfig = None
                 config = form.save(commit=False)
                 config.title = request.POST.get('title')
-                config.amountSites = int(request.POST.get('sites'))
-                config.stopAfter = int(request.POST.get('timeout'))
+                config.amountSites = request.POST.get('sites')
+                config.stopAfter = request.POST.get('timeout')
                 config.dateFrom = request.POST.get('dateFrom')
                 config.dateUntil = request.POST.get('dateUntil')
                 config.userID = request.user.id
                 config.save()
-                for i in range(len(doc_id)):
-                    save_doc = int(doc_id[i])
+                for i in range(len(url_id)):
+                    save_doc = int(url_id[i])
                     config.urls.add(Crawlerurl.objects.get(id=save_doc))
                 
                 data = {'is_valid': True, 'title': config.title, 'id': config.id}

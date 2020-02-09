@@ -51,7 +51,7 @@
           <tr class = "docIDClass" data-did="{{document.id}}">
             <td scope="row"><input type="checkbox"></td>
             <td>{{document.title}}</td>
-            <td>01.11.2019</td>
+            <td>{{document.dateField|date:'d.m.Y'}}</td>
             <td>{{document.extension}}</td>
             <td><a class="delete" href=""><span class="glyphicon glyphicon-trash"></span></a> </td>
             {% endfor %}

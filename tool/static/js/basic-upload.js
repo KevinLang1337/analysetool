@@ -21,10 +21,12 @@ $(function () {
     // Add uploaded files to table
     done: function (e, data) {
       if (data.result.is_valid) {
+        var dateConverted = data.result.date.split("-");
+        var date = (dateConverted[2]+"."+dateConverted[1]+"."+dateConverted[0]);
         $("#source_table tbody").prepend(
           "<tr class = 'docIDClass' data-did=" + data.result.id +">" + "<td><input type='checkbox' scope='row' /></td>" +
           "<td>"+ data.result.name + "</td>" + "<td>"+ 
-          "" + "</td>" +
+          date + "</td>" +
           "<td>"+ data.result.extension + "</td>"  +
           "<td><a class='delete' href=''><span class='glyphicon glyphicon-trash'></span></a> </span><td>" +
           "<td style='display:none'>" + data.result.id +"</td>" +

@@ -200,7 +200,7 @@ def konfiguration(request):
 
             print("Name: ", name, " | Typ: ", extension)
 
-            data = {'is_valid': True, 'name': name, 'extension': extension, 'id': document.id}
+            data = {'is_valid': True, 'name': name, 'extension': extension, 'id': document.id, 'date' : document.dateField}
             return JsonResponse(data)
         else:
             data = {'is_valid': False}

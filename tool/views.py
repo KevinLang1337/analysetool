@@ -1,4 +1,5 @@
 from tool.DocumentReaderPDFMiner import process_pdf, get_data_wordcloud, get_data_foamtree
+from tool.documentDateHandler import getDateFromDocument
 from django.shortcuts import render, redirect
 from django.views import generic
 from collections import Counter
@@ -41,6 +42,9 @@ nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
 # https://blog.ekbana.com/pre-processing-text-in-python-ad13ea544dae nochmal anschauen
 # https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
+
+
+
 
 @csrf_exempt
 def startcrawl(request):
@@ -167,6 +171,8 @@ def konfiguration(request):
             document.extension = extension
             document.title = name
             document.userID = request.user.id
+            document.save()
+            document.dateField = getDateFromDocument(document)
             document.save()
 
             print("Name: ", name, " | Typ: ", extension)

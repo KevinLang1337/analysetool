@@ -10,6 +10,7 @@ urlpatterns = [
     path('saveconfig/', views.saveconfig, name='saveconfig'),
     path('crawlersaveconfig/', views.crawlersaveconfig, name='crawlersaveconfig'),
     path('deleteconfig/', views.deleteconfig, name='deleteconfig'),
+    path('crawlerdeleteconfig/', views.crawlerdeleteconfig, name='crawlerdeleteconfig'),
     path('selectconfig/', views.selectconfig, name='selectconfig'),
     path('crawlerselectconfig/', views.crawlerselectconfig, name='crawlerselectconfig'),
     path('', include("django.contrib.auth.urls")),

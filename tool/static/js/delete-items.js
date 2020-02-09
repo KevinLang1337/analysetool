@@ -1,18 +1,17 @@
 // Delete Configuration onclick
-function deleteConfig(){
+function deleteConfig(URLaddress){
     var cid = $('ul li.active').attr("data-cid");
-    
     if (typeof cid !== "undefined"){
     
     $.ajax({
         type: 'POST',
-        url: '../deleteconfig/',
+        url: URLaddress,
         data:{ cid: cid
         },
         //Reload window on success
         success: function () {
         $('ul li.active').remove();
-        window.location.reload();        
+               
         }
 });
 }

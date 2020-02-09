@@ -20,8 +20,8 @@
     <li data-cid="{{crawler_config.id}}" class=" crawler-list-item list-group-item">{{crawler_config.title}}</li>
     {% endfor %}
   </ul>
-      <!-- BUTTONS OPEN CRAWLER CONFIG -->
-      <button type="button" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
+      <!-- BUTTONS DELETE CRAWLER CONFIG -->
+      <button type="button" onclick="deleteConfig('../crawlerdeleteconfig/');" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
           class="glyphicon glyphicon-minus gly-2x"></span><br>Auswahl löschen</button>
     </div>
 

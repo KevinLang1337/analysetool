@@ -121,6 +121,17 @@ def deleteconfig(request):
         return render(request, 'konfiguration.html')
     else: return render(request, 'konfiguration.html')
 
+# Deleting a Configuration for crawling
+@csrf_exempt
+def crawlerdeleteconfig(request):
+    if request.method=="POST" and request.is_ajax():
+        config_id = int(request.POST.get('cid'))
+        
+        del_config = CrawlerConfiguration.objects.get(id=config_id)
+        del_config.delete()
+        return render(request, 'webcrawler.html')
+    else: return render(request, 'webcrawler.html')
+
 # Sending values of selected Configuration to the template
 def crawlerselectconfig(request):
     if request.method=="GET" and request.is_ajax():

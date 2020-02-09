@@ -9,8 +9,6 @@ def getDateFromDocument(document):
     pdf_creation_date = doc.info[0]["CreationDate"]
     
     return(convertDatetimePDF(pdf_creation_date))
-   
-
 
 def convertDatetimePDF(date):
     from datetime import datetime
@@ -18,5 +16,5 @@ def convertDatetimePDF(date):
     clean = date.decode("utf-8").replace("D:","").split('+')[0]
     obj_date = datetime.strptime(clean, dtformat) 
     
-    return (datetime.strftime(obj_date,'%d.%m.%Y'))   
+    return (datetime.strftime(obj_date,'%Y-%m-%d'))   
     

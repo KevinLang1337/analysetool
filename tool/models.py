@@ -8,6 +8,7 @@ class Document(models.Model):
     extension = models.CharField(max_length=100, blank=True)
     file = models.FileField(upload_to='documents/')
     userID = models.IntegerField(blank=True, null=True)
+    dateField = models.DateField(blank=True, null=True)
     
     def __str__(self):
         return self.title

@@ -1,4 +1,4 @@
-from tool.DocumentReaderPDFMiner import process_pdf, get_data_wordcloud, get_data_foamtree
+from tool.DocumentReaderPDFMiner import process_pdf, get_data_wordcloud, get_data_foamtree, get_amount_processed_documents
 from tool.documentDateHandler import getDateFromDocument
 from django.shortcuts import render, redirect
 from django.views import generic
@@ -294,7 +294,10 @@ def ergebnisse(request):
 
     
     data = get_data_wordcloud()
-    js_data= json.dumps(data)
-    js_data2= json.dumps(data_foamtree)
-
-    return render(request, 'results.html', {'dict_wordcloud': js_data, 'dict_foamtree': js_data2})
+    amount_processed_documents = get_amount_processed_documents()
+    print("Anzahl: ", amount_processed_documents)
+    js_data = json.dumps(data)
+    js_data2 = json.dumps(data_foamtree)
+    js_data3 = json.dumps(amount_processed_documents)
+    
+    return render(request, 'results.html', {'dict_wordcloud': js_data, 'dict_foamtree': js_data2, 'dict_amount_processed_documents': js_data3})

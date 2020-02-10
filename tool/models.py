@@ -25,8 +25,8 @@ class Crawlerurl(models.Model):
 # Represents Configurations for Webcrawler
 class CrawlerConfiguration(models.Model):
     title = models.CharField(max_length=100, blank=True)
-    stopAfter = models.IntegerField(blank=True)
-    amountSites = models.IntegerField(blank=True)
+    stopAfter = models.CharField(max_length=100, blank=True)
+    amountSites = models.CharField(max_length=100,blank=True)
     dateFrom = models.CharField(max_length=100, blank=True)
     dateUntil = models.CharField(max_length=100, blank=True)
     urls = models.ManyToManyField(Crawlerurl, blank=True)

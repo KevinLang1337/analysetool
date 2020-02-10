@@ -46,6 +46,8 @@
     <script type="text/javascript" src="{% static 'js/save-config.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/add-url.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/startCrawling.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/crawler-save-config.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/crawler-select-config.js' %}"></script>
 
 
     <!-- FOAMTREE PLUGIN-->
@@ -111,22 +113,3 @@
     <input type="button" id="ok" value="OK!" /> 
 </div> 
 
-<!-- DIALOGUE OVERWRITE -->
-<div id="dia_overwrite" style="display:none; cursor: default">
-    <p></p> 
-    <p>Es existiert bereits eine Konfiguration mit diesem Namen. Soll diese überschrieben werden?</p>
-    <input type="button" id="confirm_overwrite_button" value="Ja, überschreiben" /> 
-    <input type="button" id="cancel_overwrite_button" value="Abbruch" />
-  </div> 
-  
-  <!-- DIALOGUE SAVE -->
-  <div id="dia_save" style="display:none; cursor: default">
-    <p></p> 
-    <p>Bitte geben Sie den Namen der Konfiguration ein.</p>
-    <form id="save_new_config_form" method="POST">
-    <input style ="margin-bottom: 5%;"type="text" class="form-control" id="name_new_config" name="title">
-    <input type="submit" id="save_config_button" value="Bestätigen" /> 
-    <input type="button" id="cancel_save_config_button" value="Abbruch" />
-  </form>
-  </div> 
-</html>

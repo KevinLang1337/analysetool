@@ -20,7 +20,7 @@
   </ul>
 
   <!-- BUTTON DELETE CONFIG -->
-  <button type="button" onclick="deleteConfig();"class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
+  <button type="button" onclick="deleteConfig('../deleteconfig/');" class="btn btn-primary btn-md btn-block" style="white-space: normal"><span
       class="glyphicon glyphicon-minus gly-2x"></span><br>Auswahl löschen</button>
 </div>
 
@@ -51,7 +51,7 @@
           <tr class = "docIDClass" data-did="{{document.id}}">
             <td scope="row"><input type="checkbox"></td>
             <td>{{document.title}}</td>
-            <td>01.11.2019</td>
+            <td>{{document.dateField|date:'d.m.Y'}}</td>
             <td>{{document.extension}}</td>
             <td><a class="delete" href=""><span class="glyphicon glyphicon-trash"></span></a> </td>
             {% endfor %}
@@ -190,6 +190,24 @@
   <input type="button" id="cancel_delete_button" value="Abbruch" />
 </div> 
 
+<!-- DIALOGUE OVERWRITE -->
+<div id="dia_overwrite" style="display:none; cursor: default">
+  <p></p> 
+  <p>Es existiert bereits eine Konfiguration mit diesem Namen. Soll diese überschrieben werden?</p>
+  <input type="button" id="confirm_overwrite_button" value="Ja, überschreiben" /> 
+  <input type="button" id="cancel_overwrite_button" value="Abbruch" />
+</div> 
 
+<!-- DIALOGUE SAVE -->
+<div id="dia_save" style="display:none; cursor: default">
+  <p></p> 
+  <p>Bitte geben Sie den Namen der Konfiguration ein.</p>
+  <form id="save_new_config_form" method="POST">
+  <input style ="margin-bottom: 5%;"type="text" class="form-control" id="name_new_config" name="title">
+  <input type="submit" id="save_config_button" value="Bestätigen" /> 
+  <input type="button" id="cancel_save_config_button" value="Abbruch" />
+</form>
+</div> 
+</html>
 
 {% endblock %}

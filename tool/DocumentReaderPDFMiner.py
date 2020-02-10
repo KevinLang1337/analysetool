@@ -28,6 +28,10 @@ def process_pdf(amount, date_from, date_until, file_ids):
     from .models import Document
     import codecs
 
+    global data_foamtree
+    data_foamtree = {}
+    global data_wordcloud
+    data_wordcloud = {}
     documents_in_dir = []
 
     print("File_IDs", file_ids)
@@ -51,17 +55,16 @@ def process_pdf(amount, date_from, date_until, file_ids):
     list_of_tokens = []
 
     file_counter = 1
+    documents_to_delete = []
     # --- EXTRACT TEXT FROM DOCUMENTS ---
     for document in documents_in_dir:
         extracted_text = ''
+        print("#--- Dokument ", document, " ---#")
         if document.extension == ".pdf":
-            print("#--- Dokument ", file_counter, ": ", document, " ---#")
+            
             extracted_text = extractTextFromPDF(document, pb, extracted_text)
 
         elif document.extension == ".txt":  
-
-           
-            print("#--- Dokument ", file_counter, ": ", document, " ---#")
             # Open the file with read only permit
             # Try to open file with different encodings
             # -- UTF-8
@@ -85,15 +88,15 @@ def process_pdf(amount, date_from, date_until, file_ids):
                         f.close()
                         print("Decoding für latin1 angewendet.")
                     except:
+                        documents_to_delete.append(document)
                         print("Es konnte kein passendes Format für Decoding gefunden werden. Dokument wird ignoriert!")
             
         else:
-            print("")
             print("##### Warnung ####")    
             print("Dokumentenendung "+str(document.extension)+" unbekannt.")
             print("##################")
             print("")    
-            documents_in_dir.remove(document)
+            documents_to_delete.append(document)
 
         if (extracted_text != ''):
             
@@ -107,12 +110,15 @@ def process_pdf(amount, date_from, date_until, file_ids):
             print("##-------------------------------------------##")
             print("")
             file_counter += 1
-           
+
+    for document in documents_to_delete:
+        documents_in_dir.remove(document)
+
     # Set amount of processed documents       
     global amount_processed_documents 
     amount_processed_documents = file_counter-1
     print("Anzahl Dokumente: ", amount_processed_documents)
-    print("Anzahl Dokumente2: ", file_counter)
+
     # --- PRINT DURATION OF ANALYSIS ---
     if len(list_of_tokens) !=  0:
         useLDA(list_of_tokens, amount, documents_in_dir)
@@ -285,16 +291,34 @@ def useLDA(list_of_token, amount_topics, files_in_directory):
     
     print("#------#")
     # SAVE DOCID AND DOCTITLE IN TOPIC_DICTIONARY
-    for docID in range(len(files_in_directory)):
-        topic_vector = ldamodel[corpus[docID]]
-        file_temp = str(files_in_directory[docID])+str(files_in_directory[docID].extension)
-        print("Doc ", docID, " (", file_temp,")")
-        print("Vector: ", topic_vector)
-        print("---")
+    # for docID in range(len(files_in_directory)):
 
-        for topicID, probability in topic_vector:
-            tuple_temp = (docID, file_temp)
-            topic_dict[topicID].append(tuple_temp)
+    #     print("DocID: ", docID)
+    #     topic_vector = ldamodel[corpus[docID]]
+    #     file_temp = str(files_in_directory[docID])+str(files_in_directory[docID].extension)
+    #     print("Doc ", docID, " (", file_temp,")")
+    #     print("Vector: ", topic_vector)
+    #     print("---")
+
+    #     for topicID, probability in topic_vector:
+    #         tuple_temp = (docID, file_temp)
+    #         topic_dict[topicID].append(tuple_temp)
+    for document in files_in_directory:
+        try:
+            index = files_in_directory.index(document)
+            topic_vector = ldamodel[corpus[index]]
+            file_temp = str(files_in_directory[index])+str(files_in_directory[index].extension)
+            print("Doc ", index, " (", file_temp,")")
+            print("Vector: ", topic_vector)
+            print("---")
+
+            for topicID, probability in topic_vector:
+                tuple_temp = (index, file_temp)
+                topic_dict[topicID].append(tuple_temp)
+        except:
+            pass
+
+
 
     print(" # # # # # # # # # # # # # ")
     # CREATE NEW CORPUS FROM SUBCORPORA

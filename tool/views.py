@@ -37,14 +37,23 @@ from .models import CrawlerConfiguration
 import json
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.utils.dateparse import parse_date
+from django.core import serializers
 
 nltk.download('stopwords', quiet=True)
 nltk.download('punkt', quiet=True)
 # https://blog.ekbana.com/pre-processing-text-in-python-ad13ea544dae nochmal anschauen
 # https://datascience.blog.wzb.eu/2016/07/13/autocorrecting-misspelled-words-in-python-using-hunspell/
 
+@csrf_exempt
+def filterdate(request):
+    if request.is_ajax():
+        date = parse_date(request.POST.get('date'))        
+        document_list = Document.objects.filter(userID=request.user.id, dateField__gte=date)
+        documents = list(document_list.values())
+        return JsonResponse(documents, safe=False)
 
-
+    else: return HttpResponse()
 
 @csrf_exempt
 def startcrawl(request):

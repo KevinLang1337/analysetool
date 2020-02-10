@@ -18,5 +18,6 @@ urlpatterns = [
     path('saveurl/', views.saveurl, name='saveurl'),
     path('startcrawl/', views.startcrawl, name='startcrawl'),
     path('deletecrawlersource/', views.deletecrawlersource, name='deletecrawlersource'),
+    path('filterdate/', views.filterdate, name='filterdate'),
     
 ]

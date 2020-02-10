@@ -29,8 +29,8 @@ $(document).ready(function(){
                 })
                 document.getElementById('amount_websites').value = data.sites;
                 document.getElementById('timeout_crawling').value = data.timeout;
-                document.getElementById('crawler_date_from').value = data.dateFrom;
-                document.getElementById('crawler_date_until').value = data.dateUntil;
+                $("#crawler_date_from").val(data.dateFrom).trigger('change');
+                $("#crawler_date_until").val(data.dateUntil).trigger('change');
                 }
                 
                 

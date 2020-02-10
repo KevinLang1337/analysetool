@@ -2,7 +2,7 @@ from nltk.tokenize import word_tokenize
 data_wordcloud = {}
 data_temp = dict()
 data_foamtree = {}
-
+amount_processed_documents = int()
 
 def get_data_foamtree():
     return data_foamtree
@@ -15,6 +15,8 @@ def get_data_temp():
 def get_data_wordcloud():
     return data_wordcloud
 
+def get_amount_processed_documents():
+    return amount_processed_documents
 
 def process_pdf(amount, date_from, date_until, file_ids):
     print(amount)
@@ -56,14 +58,35 @@ def process_pdf(amount, date_from, date_until, file_ids):
             print("#--- Dokument ", file_counter, ": ", document, " ---#")
             extracted_text = extractTextFromPDF(document, pb, extracted_text)
 
-        elif document.extension == ".txt":
+        elif document.extension == ".txt":  
+
+           
+            print("#--- Dokument ", file_counter, ": ", document, " ---#")
             # Open the file with read only permit
-            f = codecs.open("media/"+str(document.file), "r", 'utf-8')
-            # use readlines to read all lines in the file
-            # The variable "lines" is a list containing all lines in the file
-            extracted_text = f.readlines()
-            # close the file after reading the lines.
-            f.close()
+            # Try to open file with different encodings
+            # -- UTF-8
+            try:
+                f = codecs.open("media/"+str(document.file), "r", 'utf-8') # TODO: Stürzt ab, wenn Dokument nicht utf-8 ist
+                extracted_text = f.readlines()
+                f.close()
+                print("Decoding für utf-8 angewendet.")
+            except:
+                # -- UTF-16
+                try:
+                    f = codecs.open("media/"+str(document.file), "r", 'utf-16') # TODO: Stürzt ab, wenn Dokument nicht utf-8 ist
+                    extracted_text = f.readlines()
+                    f.close()
+                    print("Decoding für utf-16 angewendet.")
+                except:
+                    # -- latin1
+                    try:
+                        f = codecs.open("media/"+str(document.file), "r", 'latin1') # TODO: Stürzt ab, wenn Dokument nicht utf-8 ist
+                        extracted_text = f.readlines()
+                        f.close()
+                        print("Decoding für latin1 angewendet.")
+                    except:
+                        print("Es konnte kein passendes Format für Decoding gefunden werden. Dokument wird ignoriert!")
+            
         else:
             print("")
             print("##### Warnung ####")    
@@ -73,6 +96,7 @@ def process_pdf(amount, date_from, date_until, file_ids):
             documents_in_dir.remove(document)
 
         if (extracted_text != ''):
+            
             text_without_numbers = removeNumbers(extracted_text)
             detected_language = languageDetection(text_without_numbers)
             print("Sprache erkannt: ", detected_language)
@@ -84,7 +108,11 @@ def process_pdf(amount, date_from, date_until, file_ids):
             print("")
             file_counter += 1
            
-
+    # Set amount of processed documents       
+    global amount_processed_documents 
+    amount_processed_documents = file_counter-1
+    print("Anzahl Dokumente: ", amount_processed_documents)
+    print("Anzahl Dokumente2: ", file_counter)
     # --- PRINT DURATION OF ANALYSIS ---
     if len(list_of_tokens) !=  0:
         useLDA(list_of_tokens, amount, documents_in_dir)

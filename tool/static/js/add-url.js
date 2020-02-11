@@ -44,6 +44,8 @@ $(function () {
                 },
                 success: function (data) {
                     if (data.is_valid) {
+                        document.getElementById('websites_in_dir').innerHTML = data.number_urls;
+                        
                         $("#crawler_source_table tbody").prepend(
                           "<tr class = 'docIDClass' data-uid=" + data.id +">" + "<td><input type='checkbox' scope='row' /></td>" +
                           "<td class = 'url-list-item'>"+ data.title + "</td>" + 

@@ -186,7 +186,17 @@ def delete(request):
             delete_doc = int(doc_id[i])
             document = Document.objects.get(id=delete_doc)
             document.delete()
-        return render(request, 'konfiguration.html')
+        try:
+            latest_doc = Document.objects.filter(userID=request.user.id).latest('dateField').dateField
+        except Document.DoesNotExist:
+            latest_doc = ""
+        try:
+            earliest_doc = Document.objects.filter(userID=request.user.id).earliest('dateField').dateField
+        except Document.DoesNotExist:
+            earliest_doc = ""
+        number_docs = Document.objects.filter(userID=request.user.id).count()
+        data = {'is_valid': True, 'number_docs': number_docs, 'latest_doc': latest_doc, 'earliest_doc': earliest_doc}
+        return JsonResponse(data)
     else: return render(request, 'konfiguration.html')
 
 # Deleting an URL
@@ -198,7 +208,9 @@ def deletecrawlersource(request):
             delete_url = int(url_id[i])
             url = Crawlerurl.objects.get(id=delete_url)
             url.delete()
-        return HttpResponse()
+            number_urls = Crawlerurl.objects.filter(userID=request.user.id).count()
+        data = {'is_valid': True, 'number_urls': number_urls}
+        return JsonResponse(data)
     else: return render(request, 'webcrawler.html')
 
 
@@ -219,9 +231,17 @@ def konfiguration(request):
             document.dateField = getDateFromDocument(document)
             document.save()
 
-            print("Name: ", name, " | Typ: ", extension)
-
-            data = {'is_valid': True, 'name': name, 'extension': extension, 'id': document.id, 'date' : document.dateField}
+            try:
+                latest_doc = Document.objects.filter(userID=request.user.id).latest('dateField').dateField
+            except Document.DoesNotExist:
+                latest_doc = ""
+            try:
+                earliest_doc = Document.objects.filter(userID=request.user.id).earliest('dateField').dateField
+            except Document.DoesNotExist:
+                earliest_doc = ""
+            number_docs = Document.objects.filter(userID=request.user.id).count()
+        
+            data = {'is_valid': True, 'name': name, 'extension': extension, 'id': document.id, 'date' : document.dateField, 'number_docs': number_docs, 'latest_doc': latest_doc, 'earliest_doc': earliest_doc}
             return JsonResponse(data)
         else:
             data = {'is_valid': False}
@@ -231,7 +251,16 @@ def konfiguration(request):
     elif request.method=="GET": 
         document_list = Document.objects.filter(userID=request.user.id)
         config_list = Configuration.objects.filter(userID=request.user.id)
-        return render(request, 'konfiguration.html', {'documents':document_list, 'configs': config_list})           
+        try:
+            latest_doc = Document.objects.filter(userID=request.user.id).latest('dateField')
+        except Document.DoesNotExist:
+            latest_doc = ""
+        try:
+            earliest_doc = Document.objects.filter(userID=request.user.id).earliest('dateField')
+        except Document.DoesNotExist:
+            earliest_doc = ""
+        number_docs = Document.objects.filter(userID=request.user.id).count()
+        return render(request, 'konfiguration.html', {'number_docs': number_docs,'documents':document_list, 'configs': config_list, "latest_doc": latest_doc, "earliest_doc" : earliest_doc})           
 
 # Saving a URL for crawling
 @csrf_exempt
@@ -240,12 +269,11 @@ def saveurl(request):
         form = CrawlerurlForm(request.POST)
         if form.is_valid():
             new_url = form.save(commit =False)
-            hallo = request.POST.get('title')
-            print(hallo)
             new_url.title = request.POST.get('title')
             new_url.userID = request.user.id
             new_url.save()
-            data = {'is_valid': True, 'title':new_url.title, 'id': new_url.id}
+            number_urls = Crawlerurl.objects.filter(userID=request.user.id).count()
+            data = {'is_valid': True, 'number_urls': number_urls,'title':new_url.title, 'id': new_url.id}
             return JsonResponse(data)
         else: 
             data = {'is_valid': False}
@@ -313,7 +341,8 @@ def webcrawler(request):
     elif request.method=="GET": 
         urls_list = Crawlerurl.objects.filter(userID=request.user.id)
         crawler_config_list = CrawlerConfiguration.objects.filter(userID=request.user.id)
-        return render(request, 'webcrawler.html', {'urls':urls_list, 'crawler_configs': crawler_config_list})   
+        number_urls = Crawlerurl.objects.filter(userID=request.user.id).count()
+        return render(request, 'webcrawler.html', {'number_urls': number_urls,'urls':urls_list, 'crawler_configs': crawler_config_list})   
 
 
 def index(request):

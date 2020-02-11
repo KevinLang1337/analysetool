@@ -34,6 +34,19 @@ $(function () {
 
           
         );
+        var earliestDate = "";
+        var latestDate = "";
+        if (data.result.earliest_doc != ""){
+         dateConverted = data.result.earliest_doc.split("-");
+         earliestDate = (dateConverted[2]+"."+dateConverted[1]+"."+dateConverted[0]);
+        }
+        if (data.result.latest_doc != ""){
+        dateConverted = data.result.latest_doc.split("-");
+         latestDate = (dateConverted[2]+"."+dateConverted[1]+"."+dateConverted[0]);
+        }
+        document.getElementById('docs_in_dir').innerHTML = data.result.number_docs;
+        document.getElementById('earliest_doc_in_dir').innerHTML = earliestDate;
+        document.getElementById('latest_doc_in_dir').innerHTML = latestDate;
       }
     }
   });

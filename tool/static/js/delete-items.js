@@ -67,8 +67,8 @@ $(function(){
                 action: 'post',
                 url_id:allIDs
             },
-            success: function () {
-                
+            success: function (data) {
+                document.getElementById('websites_in_dir').innerHTML = data.number_urls;
             }
         });  
     });
@@ -92,7 +92,8 @@ $(function(){
                 action: 'post',
                 url_id:url_id
             },
-            success: function () {
+            success: function (data) {
+                document.getElementById('websites_in_dir').innerHTML = data.number_urls;
                 
             }
         });  
@@ -120,8 +121,20 @@ $(function(){
                 action: 'post',
                 doc_id:doc_id
             },
-            success: function () {
-                
+            success: function (data) {
+                var earliestDate = "";
+                var latestDate = "";
+                if (data.earliest_doc != ""){
+                    var dateConverted = data.earliest_doc.split("-");
+                     earliestDate = (dateConverted[2]+"."+dateConverted[1]+"."+dateConverted[0]);
+                    }
+                    if (data.latest_doc != ""){
+                    dateConverted = data.latest_doc.split("-");
+                     latestDate = (dateConverted[2]+"."+dateConverted[1]+"."+dateConverted[0]);
+                    }
+                    document.getElementById('docs_in_dir').innerHTML = data.number_docs;
+                    document.getElementById('earliest_doc_in_dir').innerHTML = earliestDate;
+                    document.getElementById('latest_doc_in_dir').innerHTML = latestDate;
             }
         });  
     });
@@ -177,8 +190,20 @@ $(function(){
                 action: 'post',
                 doc_id:allIDs
             },
-            success: function () {
-                
+            success: function (data) {
+                var earliestDate = "";
+                var latestDate = "";
+                if (data.earliest_doc != ""){
+                var dateConverted = data.earliest_doc.split("-");
+                 earliestDate = (dateConverted[2]+"."+dateConverted[1]+"."+dateConverted[0]);
+                }
+                if (data.latest_doc != ""){
+                dateConverted = data.latest_doc.split("-");
+                 latestDate = (dateConverted[2]+"."+dateConverted[1]+"."+dateConverted[0]);
+                }
+                document.getElementById('docs_in_dir').innerHTML = data.number_docs;
+                document.getElementById('earliest_doc_in_dir').innerHTML = earliestDate;
+                document.getElementById('latest_doc_in_dir').innerHTML = latestDate;
             }
         });  
     });

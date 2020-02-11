@@ -28,7 +28,7 @@
 <!-- ### MIDDLE COLUMN ### -->
 <!-- ################### -->
 <div class="col-md-6" style="flex-flow: column; display:flex; margin: 0; max-height: 100%;">
-  <h1 class="title" style="text-align:left;">Zu durchsuchende Webseiten</h1>
+  <h1 class="title" style="text-align:left;">Quellen für den Analysedurchlauf</h1>
   <div class="row with_scrollbar" style="flex-grow: 1;">
 
     <div class="col-12" >
@@ -75,17 +75,17 @@
     <!-- INFORMATION RIGHT SIDE-->
     <label class="col-6 col-form-label">Dokumente in Verzeichnis: </label>
     <div class="col-6">
-      <label for="amount_documents" class="col-6 col-form-label" style="margin-bottom: 2%;">XXXX</label>
+      <label for="amount_documents" id="docs_in_dir"class="col-6 col-form-label" style="margin-bottom: 2%;">{{number_docs}}</label>
     </div>
 
     <label class="col-6 col-form-label">Frühestes Datum: </label>
     <div class="col-6">
-      <label for="amount_documents" class="col-6 col-form-label" style="margin-bottom: 2%;">XX.XX.XXXX</label>
+      <label for="amount_documents" id="earliest_doc_in_dir" class="col-6 col-form-label" style="margin-bottom: 2%;">{{earliest_doc.dateField|date:'d.m.Y'}}</label>
     </div>
 
     <label class="col-6 col-form-label">Spätestes Datum: </label>
     <div class="col-6">
-      <label for="amount_documents" class="col-6 col-form-label">XX.XX.XXXX</label>
+      <label for="amount_documents" id="latest_doc_in_dir" class="col-6 col-form-label">{{latest_doc.dateField|date:'d.m.Y'}}</label>
     </div>
   </div>
 

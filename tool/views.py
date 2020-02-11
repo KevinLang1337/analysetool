@@ -48,8 +48,20 @@ nltk.download('punkt', quiet=True)
 @csrf_exempt
 def filterdate(request):
     if request.is_ajax():
-        date = parse_date(request.POST.get('date'))        
-        document_list = Document.objects.filter(userID=request.user.id, dateField__gte=date)
+        dateFrom = request.POST.get('dateFrom')
+        dateUntil = request.POST.get('dateUntil')
+        if dateFrom and dateUntil:
+            dateFrom = parse_date(request.POST.get('dateFrom'))
+            dateUntil = parse_date(request.POST.get('dateUntil'))        
+            document_list = Document.objects.filter(userID=request.user.id, dateField__gte=dateFrom, dateField__lte=dateUntil)
+        elif dateFrom and not dateUntil:
+            dateFrom = parse_date(request.POST.get('dateFrom'))        
+            document_list = Document.objects.filter(userID=request.user.id, dateField__gte=dateFrom)
+        elif dateUntil and not dateFrom:
+            dateUntil = parse_date(request.POST.get('dateUntil'))        
+            document_list = Document.objects.filter(userID=request.user.id, dateField__lte=dateUntil)
+        elif not dateFrom and not dateUntil:
+            document_list = Document.objects.filter(userID=request.user.id)
         documents = list(document_list.values())
         return JsonResponse(documents, safe=False)
 

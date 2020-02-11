@@ -22,8 +22,8 @@ $(document).on('click','.config-list-item', function() {
             var id_list = data.id_list;
             
             document.getElementById('amount_topics').value = data.topics;
-            $("#date_from").val(data.dateFrom).trigger('change', [ id_list ]);
-            $("#date_until").val(data.dateUntil)
+            $("#date_from").val(data.dateFrom)
+            $("#date_until").val(data.dateUntil).trigger('change', [ id_list ]);
             
             }
             

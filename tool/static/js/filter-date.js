@@ -4,14 +4,28 @@ $(function () {
         if (typeof param1 != 'undefined'){
          doc_ID = param1;
         }
-        
-        
-        inputdate = new Date(this.value);
-        if(!isNaN(inputdate.getTime()))
-        {
-            var month = inputdate.getMonth()+1;
-            var date = inputdate.getFullYear() + "-" + month + "-" + inputdate.getDate();
+         var inputdateFrom = document.getElementById('date_from').value
+        var inputdateUntil = document.getElementById('date_until').value
+
+        if (inputdateUntil != ""){
+            var dateUntil = new Date(inputdateUntil);
             
+            if(!isNaN(dateUntil.getTime()))
+            {
+                var monthUntil = dateUntil.getMonth()+1;
+                inputdateUntil = dateUntil.getFullYear() + "-" + monthUntil + "-" + dateUntil.getDate();
+            }
+        } 
+        
+        if (inputdateFrom != ""){
+        var dateFrom = new Date(inputdateFrom);
+        
+        if(!isNaN(dateFrom.getTime()))
+        {
+            var monthFrom = dateFrom.getMonth()+1;
+            inputdateFrom = dateFrom.getFullYear() + "-" + monthFrom + "-" + dateFrom.getDate();
+        }
+    } 
             $.ajax({
                 type: 'POST',
                 url: '../filterdate/',
@@ -19,7 +33,8 @@ $(function () {
                     action: 'post',
                     dataType: 'json',
                     contentType: 'application/json; charset=utf-8',
-                    date: date
+                    dateFrom: inputdateFrom,
+                    dateUntil: inputdateUntil
                 },
                 success: function (data) {
                 if (typeof doc_ID == 'undefined'){
@@ -58,6 +73,6 @@ $(function () {
                     
                     
             });
-        }
+        
     })
 })
